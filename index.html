@@ -1,151 +1,867 @@
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>RAJA TENGKORAK</title>
+
 <style>
-body{margin:0;background:#111827;color:white;font-family:Arial,sans-serif;text-align:center}
-main{max-width:420px;margin:30px auto;padding:20px}
-h1{color:#facc15}
-.panel{background:#1f2937;padding:20px;border-radius:14px;margin:18px 0}
-input,button{box-sizing:border-box;width:100%;padding:13px;margin:7px 0;border-radius:8px;font-size:16px}
-input{border:1px solid #64748b;background:#fff;color:#111}
-button{border:0;background:#eab308;color:#111827;font-weight:bold}
-.small{color:#cbd5e1;font-size:13px}
-#status{color:#fde68a;overflow-wrap:anywhere}
+:root {
+  --bg: #101010;
+  --panel: #202020;
+  --gold: #f3c65e;
+  --text: #ffffff;
+  --muted: #bdbdbd;
+  --red: #b52b35;
+  --green: #218653;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+header {
+  padding: 18px 12px;
+  text-align: center;
+  background: #191919;
+  border-bottom: 2px solid var(--gold);
+}
+
+header h1 {
+  margin: 0;
+  color: var(--gold);
+  font-size: 27px;
+  letter-spacing: 2px;
+}
+
+header p {
+  margin: 7px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+main {
+  width: 100%;
+  max-width: 850px;
+  margin: auto;
+  padding: 14px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid #444;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 14px;
+}
+
+h2 {
+  margin-top: 0;
+  color: var(--gold);
+  font-size: 19px;
+}
+
+input, button {
+  width: 100%;
+  padding: 12px;
+  margin: 5px 0;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+input {
+  color: white;
+  background: #111;
+  border: 1px solid #555;
+}
+
+button {
+  background: var(--gold);
+  color: #17120a;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+button.secondary {
+  background: #444;
+  color: white;
+}
+
+button.danger {
+  background: var(--red);
+  color: white;
+}
+
+button.success {
+  background: var(--green);
+  color: white;
+}
+
+.row {
+  display: flex;
+  gap: 8px;
+}
+
+.row > * {
+  flex: 1;
+  min-width: 0;
+}
+
+.status {
+  padding: 10px;
+  background: #111;
+  border-radius: 8px;
+  color: var(--gold);
+  overflow-wrap: anywhere;
+}
+
+.player-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.player {
+  background: #303030;
+  border: 1px solid #555;
+  border-radius: 8px;
+  padding: 10px;
+  overflow-wrap: anywhere;
+}
+
+.player small {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+}
+
+.hidden {
+  display: none !important;
+}
+
+#gameArea {
+  min-height: 100px;
+}
+
+#hand {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 14px 0;
+}
+
+.card {
+  width: 62px;
+  height: 90px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background: #fffdf4;
+  color: #171717;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.card.selected {
+  border: 3px solid var(--gold);
+  transform: translateY(-7px);
+  background: #ffe6a0;
+}
+
+.discard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.discard-box {
+  padding: 10px;
+  background: #151515;
+  border-radius: 8px;
+  border: 1px solid #444;
+  min-height: 75px;
+}
+
+.discard-card {
+  display: inline-block;
+  background: #fffdf4;
+  color: #171717;
+  padding: 7px;
+  margin: 3px;
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.notice {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+@media (max-width: 420px) {
+  header h1 {
+    font-size: 23px;
+  }
+
+  main {
+    padding: 9px;
+  }
+
+  .card {
+    width: 53px;
+    height: 78px;
+  }
+}
 </style>
 </head>
+
 <body>
+
+<header>
+  <h1>☠ RAJA TENGKORAK ☠</h1>
+  <p>Permainan kartu bersama teman</p>
+</header>
+
 <main>
-<h1>💀 RAJA TENGKORAK</h1>
-<p>Permainan kartu Truf bersama teman</p>
 
-<div class="panel">
-<h3>Masuk Permainan</h3>
-<input id="nama" placeholder="Nama pemain">
-<button id="buat">Buat Ruang Baru</button>
-<hr>
-<input id="kode" placeholder="Masukkan kode ruang">
-<button id="gabung">Gabung Ruang</button>
-</div>
+  <section class="panel">
+    <h2>Profil Pemain</h2>
 
-<div class="panel">
-<h3>Ruang Permainan</h3>
-<p>Kode ruang:</p>
-<h1 id="ruang">----</h1>
-<p id="status">Halaman siap. Koneksi online belum diatur.</p>
-<div id="pemain"></div>
-</div>
+    <input
+      id="playerName"
+      type="text"
+      maxlength="20"
+      placeholder="Masukkan nama pemain"
+    >
 
-<p class="small">RAJA TENGKORAK • Versi awal</p>
+    <div id="connectionStatus" class="status">
+      Menyiapkan koneksi...
+    </div>
+  </section>
+
+  <section class="panel" id="lobby">
+    <h2>Ruang Permainan</h2>
+
+    <button id="createRoomBtn">
+      Buat Ruang Baru
+    </button>
+
+    <p class="notice">
+      Atau masukkan kode ruang teman Anda.
+    </p>
+
+    <input
+      id="roomCodeInput"
+      type="text"
+      maxlength="8"
+      placeholder="Kode ruang"
+    >
+
+    <button id="joinRoomBtn" class="success">
+      Gabung Ruang
+    </button>
+  </section>
+
+  <section class="panel hidden" id="roomArea">
+    <h2>Meja RAJA TENGKORAK</h2>
+
+    <p>
+      Kode ruang:
+      <strong id="roomCodeDisplay"></strong>
+    </p>
+
+    <button id="copyRoomBtn" class="secondary">
+      Salin Kode Ruang
+    </button>
+
+    <h2>Daftar Pemain</h2>
+
+    <div id="playerList" class="player-list"></div>
+
+    <p id="seatInfo" class="notice">
+      Menunggu pemain...
+    </p>
+
+    <button id="fillBotsBtn" class="secondary">
+      Isi Kursi Kosong dengan BOT
+    </button>
+
+    <button id="startGameBtn" class="success">
+      Mulai Permainan
+    </button>
+
+    <button id="leaveRoomBtn" class="danger">
+      Keluar dari Ruang
+    </button>
+  </section>
+
+  <section class="panel hidden" id="gameArea">
+    <h2>Permainan Kartu</h2>
+
+    <p id="gameMessage">
+      Permainan akan ditampilkan di sini.
+    </p>
+
+    <div id="hand"></div>
+
+    <button id="discardBtn" class="danger" disabled>
+      Buang Kartu
+    </button>
+
+    <div id="discardConfirmation" class="hidden">
+      <p>Apakah Anda yakin ingin membuang kartu ini?</p>
+
+      <div class="row">
+        <button id="confirmDiscardBtn" class="danger">
+          Ya, Buang
+        </button>
+
+        <button id="cancelDiscardBtn" class="secondary">
+          Batal
+        </button>
+      </div>
+    </div>
+
+    <h2>Kartu Buangan Pemain</h2>
+
+    <div id="discardGrid" class="discard-grid"></div>
+  </section>
+
+  <section class="panel">
+    <h2>Informasi</h2>
+    <p id="message" class="notice">
+      Selamat datang di RAJA TENGKORAK.
+    </p>
+  </section>
+
 </main>
+</body>
+</html>
 
-<script type="module">
-import { initializeApp } from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInAnonymously } from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {
- getDatabase, ref, set, get, onValue, update
-} from
-"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+<script>
+"use strict";
 
-/* GANTI objek di bawah ini dengan konfigurasi Firebase Bapak */
-const firebaseConfig = {
-  apiKey: "AIzaSyCZsrSCwEkW_vaYMHSQJHYvAHE9jd6NWnE",
-  authDomain: "raja-tengkorak.firebaseapp.com",
-  databaseURL: "https://raja-tengkorak-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "raja-tengkorak",
-  storageBucket: "raja-tengkorak.firebasestorage.app",
-  messagingSenderId: "617878909655",
-  appId: "1:617878909655:web:aa3d050fbb7636018c3692",
-  measurementId: "G-Q1GQZ9D5WK"
+/* =====================================
+   RAJA TENGKORAK - BAGIAN 2
+   Pengaturan pemain dan permainan lokal
+===================================== */
+
+const $ = (id) => document.getElementById(id);
+
+const state = {
+  roomCode: "",
+  playerId: "",
+  playerName: "",
+  players: [],
+  hand: [],
+  selectedCard: null,
+  pendingCard: null,
+  discards: {},
+  started: false,
+  localMode: false
 };
 
-const statusEl = document.getElementById("status");
-const roomEl = document.getElementById("ruang");
-const playersEl = document.getElementById("pemain");
-let db, user;
+function makeId(length = 6) {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let result = "";
 
-function status(teks) {
-  statusEl.textContent = teks;
+  for (let i = 0; i < length; i++) {
+    result += chars[Math.floor(Math.random() * chars.length)];
+  }
+
+  return result;
+}
+
+function showMessage(message) {
+  $("message").textContent = message;
+}
+
+function setConnection(message) {
+  $("connectionStatus").textContent = message;
+}
+
+function getPlayerName() {
+  const name = $("playerName").value.trim();
+
+  if (!name) {
+    alert("Masukkan nama pemain terlebih dahulu.");
+    $("playerName").focus();
+    return null;
+  }
+
+  state.playerName = name;
+  return name;
+}
+
+function createDeck() {
+  const suits = [
+    { symbol: "♠", color: "black" },
+    { symbol: "♥", color: "red" },
+    { symbol: "♦", color: "red" },
+    { symbol: "♣", color: "black" }
+  ];
+
+  const deck = [];
+
+  for (const suit of suits) {
+    for (let value = 2; value <= 14; value++) {
+      let label = String(value);
+
+      if (value === 11) label = "J";
+      if (value === 12) label = "Q";
+      if (value === 13) label = "K";
+      if (value === 14) label = "A";
+
+      deck.push({
+        id: makeId(10),
+        value,
+        label,
+        suit: suit.symbol,
+        color: suit.color
+      });
+    }
+  }
+
+  return deck;
+}
+
+function shuffleDeck(deck) {
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+
+  return deck;
+}
+
+function createLocalRoom() {
+  const name = getPlayerName();
+  if (!name) return;
+
+  state.roomCode = makeId(6);
+  state.playerId = makeId(12);
+  state.localMode = true;
+  state.started = false;
+  state.hand = [];
+  state.discards = {};
+
+  state.players = [{
+    id: state.playerId,
+    name,
+    isBot: false
+  }];
+
+  $("roomCodeDisplay").textContent = state.roomCode;
+  $("lobby").classList.add("hidden");
+  $("roomArea").classList.remove("hidden");
+  $("gameArea").classList.add("hidden");
+
+  setConnection("Mode lokal: belum terhubung ke pemain online.");
+  showMessage("Ruang lokal dibuat. Tambahkan BOT atau lanjutkan pengaturan.");
+
+  renderPlayers();
+}
+
+function joinLocalRoom() {
+  const name = getPlayerName();
+  if (!name) return;
+
+  const code = $("roomCodeInput").value.trim().toUpperCase();
+
+  if (!code) {
+    alert("Masukkan kode ruang.");
+    return;
+  }
+
+  if (!state.roomCode || code !== state.roomCode) {
+    alert(
+      "Ruang tidak ditemukan dalam sesi lokal ini. " +
+      "Gabung lintas perangkat memerlukan Firebase."
+    );
+    return;
+  }
+
+  if (state.players.length >= 4) {
+    alert("Ruang sudah penuh.");
+    return;
+  }
+
+  state.playerId = makeId(12);
+
+  state.players.push({
+    id: state.playerId,
+    name,
+    isBot: false
+  });
+
+  renderPlayers();
+  showMessage(name + " masuk ke ruang lokal.");
+}
+
+function renderPlayers() {
+  const list = $("playerList");
+  list.replaceChildren();
+
+  for (let i = 0; i < 4; i++) {
+    const player = state.players[i];
+    const item = document.createElement("div");
+    item.className = "player";
+
+    if (player) {
+      const name = document.createElement("strong");
+      name.textContent = player.name;
+      item.appendChild(name);
+
+      const detail = document.createElement("small");
+      detail.textContent = player.isBot
+        ? "BOT"
+        : player.id === state.playerId
+          ? "Anda"
+          : "Pemain";
+      item.appendChild(detail);
+    } else {
+      item.textContent = "Kursi kosong";
+    }
+
+    list.appendChild(item);
+  }
+
+  $("seatInfo").textContent =
+    state.players.length + " dari 4 kursi terisi.";
+}
+
+function fillBots() {
+  if (!state.roomCode) {
+    alert("Buat ruang terlebih dahulu.");
+    return;
+  }
+
+  while (state.players.length < 4) {
+    state.players.push({
+      id: "BOT_" + makeId(8),
+      name: "BOT " + (state.players.length + 1),
+      isBot: true
+    });
+  }
+
+  renderPlayers();
+  showMessage("Empat kursi sudah terisi.");
+}
+
+function startLocalGame() {
+  if (state.players.length < 2) {
+    alert("Diperlukan minimal 2 pemain atau BOT.");
+    return;
+  }
+
+  const deck = shuffleDeck(createDeck());
+  state.hand = [];
+  state.selectedCard = null;
+  state.pendingCard = null;
+  state.discards = {};
+  state.started = true;
+
+  for (const player of state.players) {
+    state.discards[player.id] = [];
+  }
+
+  for (let i = 0; i < 5; i++) {
+    state.hand.push(deck.pop());
+  }
+
+  $("roomArea").classList.add("hidden");
+  $("gameArea").classList.remove("hidden");
+  $("discardConfirmation").classList.add("hidden");
+
+  $("gameMessage").textContent =
+    "Permainan lokal dimulai. Pilih kartu dari tangan Anda.";
+
+  renderHand();
+  renderDiscards();
+  showMessage("Permainan dimulai dengan 5 kartu.");
+}
+
+function renderHand() {
+  const hand = $("hand");
+  hand.replaceChildren();
+
+  state.hand.forEach((card) => {
+    const button = document.createElement("button");
+    button.className = "card";
+
+    if (state.selectedCard === card.id) {
+      button.classList.add("selected");
+    }
+
+    button.textContent = card.label + card.suit;
+    button.style.color = card.color === "red" ? "#c51f35" : "#171717";
+    button.setAttribute("aria-label", card.label + " " + card.suit);
+
+    button.addEventListener("click", () => {
+      if (!state.started) return;
+
+      state.selectedCard = card.id;
+      state.pendingCard = null;
+      $("discardConfirmation").classList.add("hidden");
+
+      renderHand();
+      $("discardBtn").disabled = false;
+    });
+
+    hand.appendChild(button);
+  });
+
+  if (state.hand.length === 0) {
+    hand.textContent = "Kartu Anda habis.";
+  }
+
+  $("discardBtn").disabled =
+    !state.started || !state.selectedCard;
+}
+
+function prepareDiscard() {
+  if (!state.started || !state.selectedCard) {
+    alert("Pilih kartu terlebih dahulu.");
+    return;
+  }
+
+  state.pendingCard = state.selectedCard;
+  $("discardConfirmation").classList.remove("hidden");
+  $("gameMessage").textContent =
+    "Periksa kartu yang dipilih sebelum mengonfirmasi.";
+}
+
+function cancelDiscard() {
+  state.pendingCard = null;
+  $("discardConfirmation").classList.add("hidden");
+  $("gameMessage").textContent =
+    "Buang kartu dibatalkan. Kartu tetap di tangan Anda.";
+}
+
+function confirmDiscard() {
+  if (!state.started || !state.pendingCard) {
+    alert("Pilih kartu dan tekan Buang Kartu terlebih dahulu.");
+    return;
+  }
+
+  const index = state.hand.findIndex(
+    card => card.id === state.pendingCard
+  );
+
+  if (index === -1) {
+    cancelDiscard();
+    return;
+  }
+
+  const card = state.hand.splice(index, 1)[0];
+
+  if (!state.discards[state.playerId]) {
+    state.discards[state.playerId] = [];
+  }
+
+  state.discards[state.playerId].push(card);
+  state.selectedCard = null;
+  state.pendingCard = null;
+
+  $("discardConfirmation").classList.add("hidden");
+
+  renderHand();
+  renderDiscards();
+
+  $("gameMessage").textContent =
+    "Kartu " + card.label + card.suit + " berhasil dibuang.";
+
+  showMessage("Kartu dibuang melalui konfirmasi dua langkah.");
+}
+
+function renderDiscards() {
+  const grid = $("discardGrid");
+  grid.replaceChildren();
+
+  for (const player of state.players) {
+    const box = document.createElement("div");
+    box.className = "discard-box";
+
+    const title = document.createElement("strong");
+    title.textContent = player.name;
+    box.appendChild(title);
+
+    const cards = state.discards[player.id] || [];
+
+    const contents = document.createElement("div");
+
+    if (cards.length === 0) {
+      const empty = document.createElement("p");
+      empty.className = "notice";
+      empty.textContent = "Belum membuang kartu";
+      contents.appendChild(empty);
+    } else {
+      for (const card of cards) {
+        const item = document.createElement("span");
+        item.className = "discard-card";
+        item.style.color =
+          card.color === "red" ? "#c51f35" : "#171717";
+        item.textContent = card.label + card.suit;
+        contents.appendChild(item);
+      }
+    }
+
+    box.appendChild(contents);
+    grid.appendChild(box);
+  }
+}
+
+function leaveRoom() {
+  state.roomCode = "";
+  state.playerId = "";
+  state.players = [];
+  state.hand = [];
+  state.discards = {};
+  state.selectedCard = null;
+  state.pendingCard = null;
+  state.started = false;
+
+  $("roomArea").classList.add("hidden");
+  $("gameArea").classList.add("hidden");
+  $("lobby").classList.remove("hidden");
+
+  setConnection("Mode lokal: tidak ada koneksi online.");
+  showMessage("Anda telah keluar dari ruang.");
+}
+
+$("createRoomBtn").addEventListener("click", createLocalRoom);
+$("joinRoomBtn").addEventListener("click", joinLocalRoom);
+$("fillBotsBtn").addEventListener("click", fillBots);
+$("startGameBtn").addEventListener("click", startLocalGame);
+$("discardBtn").addEventListener("click", prepareDiscard);
+$("confirmDiscardBtn").addEventListener("click", confirmDiscard);
+$("cancelDiscardBtn").addEventListener("click", cancelDiscard);
+$("leaveRoomBtn").addEventListener("click", leaveRoom);
+
+$("copyRoomBtn").addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(state.roomCode);
+    showMessage("Kode ruang berhasil disalin.");
+  } catch {
+    showMessage("Kode ruang Anda: " + state.roomCode);
+  }
+});
+
+setConnection("Mode lokal siap. Firebase belum dihubungkan.");
+showMessage("Silakan masukkan nama untuk membuat ruang.");
+</script>
+
+<!-- RAJA TENGKORAK - BAGIAN 3 -->
+<script type="module">
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+
+import {
+  getAuth,
+  signInAnonymously
+} from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  getDoc,
+  onSnapshot,
+  updateDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+
+/*
+LANGKAH PENTING:
+Ganti konfigurasi di bawah dengan konfigurasi
+proyek Firebase milik Anda.
+*/
+
+const firebaseConfig = {
+  apiKey: "GANTI_DENGAN_API_KEY",
+  authDomain: "GANTI_DENGAN_AUTH_DOMAIN",
+  projectId: "GANTI_DENGAN_PROJECT_ID",
+  storageBucket: "GANTI_DENGAN_STORAGE_BUCKET",
+  messagingSenderId: "GANTI_DENGAN_MESSAGING_SENDER_ID",
+  appId: "GANTI_DENGAN_APP_ID"
+};
+
+const status = document.getElementById("connectionStatus");
+const message = document.getElementById("message");
+
+function firebaseStatus(text) {
+  status.textContent = text;
+}
+
+function firebaseMessage(text) {
+  message.textContent = text;
 }
 
 try {
-  if (Object.values(firebaseConfig).some(v => v.startsWith("ISI_"))) {
-    throw new Error("Konfigurasi Firebase belum diisi.");
+  if (
+    firebaseConfig.apiKey.startsWith("GANTI_") ||
+    firebaseConfig.projectId.startsWith("GANTI_") ||
+    firebaseConfig.appId.startsWith("GANTI_")
+  ) {
+    throw new Error(
+      "Konfigurasi Firebase belum diisi."
+    );
   }
+
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
-  db = getDatabase(app);
+  const db = getFirestore(app);
 
-  signInAnonymously(auth).then(credential => {
-    user = credential.user;
-    status("Terhubung ke Firebase. Silakan buat atau gabung ruang.");
-  }).catch(() => status("Login gagal. Periksa Authentication Firebase."));
-} catch (e) {
-  status(e.message);
-}
+  const credential = await signInAnonymously(auth);
 
-function namaPemain() {
-  return document.getElementById("nama").value.trim();
-}
+  firebaseStatus("Firebase terhubung. Login anonim berhasil.");
+  firebaseMessage(
+    "Firebase siap. ID pengguna: " + credential.user.uid
+  );
 
-document.getElementById("buat").onclick = async () => {
-  if (!db || !user) return status("Tunggu koneksi Firebase.");
-  const nama = namaPemain();
-  if (!nama) return status("Masukkan nama pemain terlebih dahulu.");
+  /*
+  Referensi database untuk tahap pengembangan berikutnya.
+  Permainan online belum aktif hanya dengan koneksi ini.
+  */
 
-  const kode = Math.random().toString(36).slice(2, 6).toUpperCase();
-  try {
-    await set(ref(db, "rooms/" + kode), {
-      host: user.uid,
-      players: {
-        [user.uid]: { nama: nama, siap: true }
-      },
-      status: "menunggu",
-      dibuat: Date.now()
-    });
-    masukRuang(kode);
-  } catch (e) {
-    status("Belum bisa membuat ruang. Aturan keamanan database perlu diatur.");
-  }
-};
+  window.rajaTengkorakFirebase = {
+    app,
+    auth,
+    db,
+    doc,
+    setDoc,
+    getDoc,
+    onSnapshot,
+    updateDoc,
+    serverTimestamp
+  };
 
-document.getElementById("gabung").onclick = async () => {
-  if (!db || !user) return status("Tunggu koneksi Firebase.");
-  const nama = namaPemain();
-  const kode = document.getElementById("kode").value.trim().toUpperCase();
-  if (!nama || !kode) return status("Isi nama dan kode ruang.");
+} catch (error) {
+  console.error("Firebase:", error);
 
-  try {
-    const roomRef = ref(db, "rooms/" + kode);
-    const snap = await get(roomRef);
-    if (!snap.exists()) return status("Kode ruang tidak ditemukan.");
+  firebaseStatus("Firebase belum siap.");
 
-    await update(ref(db, "rooms/" + kode + "/players"), {
-      [user.uid]: { nama: nama, siap: true }
-    });
-    masukRuang(kode);
-  } catch (e) {
-    status("Belum bisa bergabung. Periksa aturan keamanan database.");
-  }
-};
-
-function masukRuang(kode) {
-  roomEl.textContent = kode;
-  status("Ruang aktif. Bagikan kode ini kepada teman.");
-  onValue(ref(db, "rooms/" + kode + "/players"), snap => {
-    playersEl.replaceChildren();
-    const data = snap.val() || {};
-    Object.values(data).forEach(p => {
-      const baris = document.createElement("p");
-      baris.textContent = "♟ " + p.nama;
-      playersEl.appendChild(baris);
-    });
-  });
+  firebaseMessage(
+    error.message ||
+    "Periksa konfigurasi dan pengaturan Firebase."
+  );
 }
 </script>
-</body>
-</html>
