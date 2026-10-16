@@ -625,6 +625,177 @@ async function sendChat() {
   }
 }
 
+/* MODE SOLO: 1 PEMAIN + 3 BOT */
+let soloGame = null;
+
+const soloButton = document.createElement("button");
+soloButton.id = "soloMode";
+soloButton.className = "secondary";
+soloButton.textContent = "Main sendiri vs 3 BOT";
+$("start").insertAdjacentElement("afterend", soloButton);
+soloButton.addEventListener("click", startSoloGame);
+
+function startSoloGame() {
+  if (roomId) {
+    say("Untuk mode BOT, muat ulang halaman terlebih dahulu.");
+    return;
+  }
+
+  const deck = makeDeck();
+  const players = [
+    { uid: "human", name: playerName() },
+    { uid: "bot1", name: "BOT Tengkorak 1" },
+    { uid: "bot2", name: "BOT Tengkorak 2" },
+    { uid: "bot3", name: "BOT Tengkorak 3" }
+  ];
+
+  const hands = {};
+  players.forEach((p, i) => {
+    hands[p.uid] = deck.slice(i * 13, (i + 1) * 13);
+  });
+
+  soloGame = {
+    players,
+    hands,
+    turn: 0,
+    trump: SUITS[Math.floor(Math.random() * SUITS.length)],
+    trick: [],
+    trickNumber: 0,
+    scores: { human: 0, bot1: 0, bot2: 0, bot3: 0 },
+    finished: false,
+    message: "Ronde BOT dimulai. Anda mendapat 13 kartu."
+  };
+
+  $("start").disabled = true;
+  soloButton.disabled = true;
+  renderSoloGame();
+  scheduleBot();
+}
+
+function renderSoloGame() {
+  if (!soloGame) return;
+  const g = soloGame;
+
+  $("players").textContent =
+    g.players.map((p, i) => (i + 1) + ". " + p.name).join(" | ");
+  $("round").textContent = "BOT";
+  $("trump").textContent = g.trump;
+  $("trickNumber").textContent = g.trickNumber;
+  $("turn").textContent =
+    g.finished ? "Ronde selesai" : g.players[g.turn].name;
+  $("message").textContent = g.message;
+
+  const hand = g.hands.human;
+  $("remaining").textContent = hand.length;
+  $("hand").innerHTML = "";
+
+  hand.forEach(card => {
+    const b = document.createElement("button");
+    b.className = "card" +
+      (["♥", "♦"].includes(card.suit) ? " red" : "");
+    b.textContent = card.rank + card.suit;
+    b.disabled = g.finished || g.turn !== 0;
+    b.onclick = () => playSoloCard("human", card.id);
+    $("hand").appendChild(b);
+  });
+
+  $("table").innerHTML = "";
+  g.trick.forEach(play => {
+    const el = document.createElement("div");
+    el.className = "played";
+    el.textContent =
+      play.name + ": " + play.card.rank + play.card.suit;
+    $("table").appendChild(el);
+  });
+
+  $("scores").innerHTML = "";
+  g.players.forEach(p => {
+    const el = document.createElement("p");
+    el.textContent = p.name + ": " + g.scores[p.uid] + " trik";
+    $("scores").appendChild(el);
+  });
+
+  if (g.finished) {
+    const best = Math.max(...Object.values(g.scores));
+    const winners = g.players
+      .filter(p => g.scores[p.uid] === best)
+      .map(p => p.name);
+    const el = document.createElement("p");
+    el.textContent =
+      "Skor tertinggi: " + winners.join(", ") +
+      " (" + best + " trik)";
+    $("scores").appendChild(el);
+  }
+}
+
+function playSoloCard(uid, cardId) {
+  const g = soloGame;
+  if (!g || g.finished || g.players[g.turn].uid !== uid) return;
+
+  const hand = g.hands[uid];
+  const idx = hand.findIndex(c => c.id === cardId);
+  if (idx < 0) return;
+
+  if (g.trick.length === 4) g.trick = [];
+
+  const card = hand.splice(idx, 1)[0];
+  const player = g.players[g.turn];
+
+  g.trick.push({ uid, name: player.name, card });
+  g.message = player.name + " memainkan " +
+    card.rank + card.suit;
+
+  if (g.trick.length === 4) {
+    const leadSuit = g.trick[0].card.suit;
+    const trumps = g.trick.filter(p => p.card.suit === g.trump);
+    const winningSuit = trumps.length ? g.trump : leadSuit;
+    const eligible = g.trick.filter(
+      p => p.card.suit === winningSuit
+    );
+    eligible.sort((a, b) => b.card.value - a.card.value);
+
+    const winner = eligible[0];
+    g.scores[winner.uid]++;
+    g.trickNumber++;
+    g.turn = g.players.findIndex(p => p.uid === winner.uid);
+    g.message =
+      winner.name + " memenangkan trik ke-" + g.trickNumber;
+
+    if (g.trickNumber === 13) {
+      g.finished = true;
+      g.message = "Ronde selesai! Semua 13 trik telah dimainkan.";
+    }
+  } else {
+    g.turn = (g.turn + 1) % 4;
+  }
+
+  renderSoloGame();
+  scheduleBot();
+}
+
+function scheduleBot() {
+  const g = soloGame;
+  if (!g || g.finished || g.turn === 0) return;
+
+  setTimeout(() => {
+    if (!soloGame || soloGame !== g || g.finished || g.turn === 0)
+      return;
+
+    const uid = g.players[g.turn].uid;
+    const hand = g.hands[uid];
+    let choices = hand;
+
+    if (g.trick.length > 0 && g.trick.length < 4) {
+      const leadSuit = g.trick[0].card.suit;
+      const followSuit = hand.filter(c => c.suit === leadSuit);
+      if (followSuit.length) choices = followSuit;
+    }
+
+    const card = choices[Math.floor(Math.random() * choices.length)];
+    if (card) playSoloCard(uid, card.id);
+  }, 650);
+}
+
 $("create").addEventListener("click", createRoom);
 $("join").addEventListener("click", () => joinRoom(false));
 $("watch").addEventListener("click", () => joinRoom(true));
