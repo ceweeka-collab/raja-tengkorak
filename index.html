@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RAJA TENGKORAK</title>
+<style>
+body{margin:0;background:#111827;color:white;font-family:Arial,sans-serif;text-align:center}
+main{max-width:420px;margin:30px auto;padding:20px}
+h1{color:#facc15}
+.panel{background:#1f2937;padding:20px;border-radius:14px;margin:18px 0}
+input,button{box-sizing:border-box;width:100%;padding:13px;margin:7px 0;border-radius:8px;font-size:16px}
+input{border:1px solid #64748b;background:#fff;color:#111}
+button{border:0;background:#eab308;color:#111827;font-weight:bold}
+.small{color:#cbd5e1;font-size:13px}
+#status{color:#fde68a;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<main>
+<h1>💀 RAJA TENGKORAK</h1>
+<p>Permainan kartu Truf bersama teman</p>
+
+<div class="panel">
+<h3>Masuk Permainan</h3>
+<input id="nama" placeholder="Nama pemain">
+<button id="buat">Buat Ruang Baru</button>
+<hr>
+<input id="kode" placeholder="Masukkan kode ruang">
+<button id="gabung">Gabung Ruang</button>
+</div>
+
+<div class="panel">
+<h3>Ruang Permainan</h3>
+<p>Kode ruang:</p>
+<h1 id="ruang">----</h1>
+<p id="status">Halaman siap. Koneksi online belum diatur.</p>
+<div id="pemain"></div>
+</div>
+
+<p class="small">RAJA TENGKORAK • Versi awal</p>
+</main>
+
+<script type="module">
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, signInAnonymously } from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+ getDatabase, ref, set, get, onValue, update
+} from
+"https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+/* GANTI objek di bawah ini dengan konfigurasi Firebase Bapak */
+const firebaseConfig = {
+  apiKey: "ISI_API_KEY",
+  authDomain: "ISI_AUTH_DOMAIN",
+  databaseURL: "ISI_DATABASE_URL",
+  projectId: "raja-tengkorak",
+  appId: "ISI_APP_ID"
+};
+
+const statusEl = document.getElementById("status");
+const roomEl = document.getElementById("ruang");
+const playersEl = document.getElementById("pemain");
+let db, user;
+
+function status(teks) {
+  statusEl.textContent = teks;
+}
+
+try {
+  if (Object.values(firebaseConfig).some(v => v.startsWith("ISI_"))) {
+    throw new Error("Konfigurasi Firebase belum diisi.");
+  }
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  db = getDatabase(app);
+
+  signInAnonymously(auth).then(credential => {
+    user = credential.user;
+    status("Terhubung ke Firebase. Silakan buat atau gabung ruang.");
+  }).catch(() => status("Login gagal. Periksa Authentication Firebase."));
+} catch (e) {
+  status(e.message);
+}
+
+function namaPemain() {
+  return document.getElementById("nama").value.trim();
+}
+
+document.getElementById("buat").onclick = async () => {
+  if (!db || !user) return status("Tunggu koneksi Firebase.");
+  const nama = namaPemain();
+  if (!nama) return status("Masukkan nama pemain terlebih dahulu.");
+
+  const kode = Math.random().toString(36).slice(2, 6).toUpperCase();
+  try {
+    await set(ref(db, "rooms/" + kode), {
+      host: user.uid,
+      players: {
+        [user.uid]: { nama: nama, siap: true }
+      },
+      status: "menunggu",
+      dibuat: Date.now()
+    });
+    masukRuang(kode);
+  } catch (e) {
+    status("Belum bisa membuat ruang. Aturan keamanan database perlu diatur.");
+  }
+};
+
+document.getElementById("gabung").onclick = async () => {
+  if (!db || !user) return status("Tunggu koneksi Firebase.");
+  const nama = namaPemain();
+  const kode = document.getElementById("kode").value.trim().toUpperCase();
+  if (!nama || !kode) return status("Isi nama dan kode ruang.");
+
+  try {
+    const roomRef = ref(db, "rooms/" + kode);
+    const snap = await get(roomRef);
+    if (!snap.exists()) return status("Kode ruang tidak ditemukan.");
+
+    await update(ref(db, "rooms/" + kode + "/players"), {
+      [user.uid]: { nama: nama, siap: true }
+    });
+    masukRuang(kode);
+  } catch (e) {
+    status("Belum bisa bergabung. Periksa aturan keamanan database.");
+  }
+};
+
+function masukRuang(kode) {
+  roomEl.textContent = kode;
+  status("Ruang aktif. Bagikan kode ini kepada teman.");
+  onValue(ref(db, "rooms/" + kode + "/players"), snap => {
+    playersEl.replaceChildren();
+    const data = snap.val() || {};
+    Object.values(data).forEach(p => {
+      const baris = document.createElement("p");
+      baris.textContent = "♟ " + p.nama;
+      playersEl.appendChild(baris);
+    });
+  });
+}
+</script>
+</body>
+</html>
