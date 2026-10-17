@@ -45,7 +45,6 @@ button:disabled{opacity:.3;cursor:not-allowed}
   border: 1px solid rgba(255,255,255,0.1);
 }
 
-/* AREA KARTU YANG DIMAINKAN DI TENGAH MEJA */
 .table-center-felt {
   text-align: center;
   margin: 10px 0;
@@ -59,7 +58,6 @@ button:disabled{opacity:.3;cursor:not-allowed}
   100% { transform: scale(1); opacity: 1; }
 }
 
-/* KARTU DI MEJA BAGIAN BAWAH (KARTU PEMAIN) */
 .player-hand-zone {
   width: 100%;
   background: rgba(0, 0, 0, 0.35);
@@ -79,7 +77,6 @@ button:disabled{opacity:.3;cursor:not-allowed}
 .card:hover:not(:disabled){transform:translateY(-10px);background:#fffdf0}
 .red{color:#d63031}
 
-/* POPUP TROPHY / KEMENANGAN */
 #trophyOverlay {
   display: none;
   position: absolute;
@@ -125,14 +122,16 @@ button:disabled{opacity:.3;cursor:not-allowed}
 </div>
 <p id="status">Siap digunakan.</p>
 <p style="margin:4px 0; font-size:13px">Kode Room: <strong id="shownCode">-</strong> | Pemain: <span id="players">-</span></p>
-<button id="start" disabled>Mulai Game (Ronde 1-6)</button>
+<div class="row">
+  <button id="start" disabled>Mulai Game (4 Pemain)</button>
+  <button id="soloMode" class="secondary">Main sendiri vs 3 BOT</button>
+</div>
 </section>
 
 <!-- MEJA KASINO UTAMA -->
 <section class="panel" style="padding:5px">
 <div class="casino-table">
   
-  <!-- INFORMASI MEJA -->
   <div class="table-header-info">
     <span>Ronde: <strong id="round">0</strong> / 6</span>
     <span>Truf: <strong id="trump">-</strong></span>
@@ -140,19 +139,16 @@ button:disabled{opacity:.3;cursor:not-allowed}
     <span>Giliran: <strong id="turn" style="color:#f5d66e">-</strong></span>
   </div>
 
-  <!-- AREA KARTU DI TENGAH MEJA -->
   <div class="table-center-felt">
     <p id="message" style="margin:4px 0; font-size:13px; font-weight:bold; text-shadow:1px 1px 2px #000;">Belum ada permainan di meja.</p>
     <div id="table"></div>
   </div>
 
-  <!-- KARTU TANGAN PEMAIN DI DALAM MEJA -->
   <div class="player-hand-zone">
     <div class="player-hand-title">🎴 KARTU TANGAN ANDA (Sisa: <span id="remaining">0</span>)</div>
     <div id="hand"></div>
   </div>
 
-  <!-- OVERLAY TROPHY / PERAYAAN JUARA -->
   <div id="trophyOverlay">
     <div class="trophy-icon">🏆</div>
     <h2 style="color:#f5d66e; margin:5px 0;">PEMENANG TURNAMEN!</h2>
@@ -207,6 +203,7 @@ let roomData = null;
 let isSpectator = false;
 let unsubscribeRoom = null;
 let busy = false;
+let soloGame = null;
 
 function say(msg) { $("status").textContent = msg; }
 function playerName() { return $("name").value.trim() || "Pemain"; }
@@ -224,6 +221,156 @@ function makeDeck() {
 onAuthStateChanged(auth, user => { if (user) uid = user.uid; });
 signInAnonymously(auth).catch(() => {});
 
+/* PERMAINAN DENGAN 3 BOT */
+function startSoloGame() {
+  if (roomId) { say("Muat ulang halaman untuk main mode BOT."); return; }
+  
+  const deck = makeDeck();
+  const players = [
+    { uid: "human", name: playerName() },
+    { uid: "bot1", name: "BOT Tengkorak 1" },
+    { uid: "bot2", name: "BOT Tengkorak 2" },
+    { uid: "bot3", name: "BOT Tengkorak 3" }
+  ];
+
+  const hands = {};
+  players.forEach((p, i) => { hands[p.uid] = deck.slice(i * 13, (i + 1) * 13); });
+
+  soloGame = {
+    players, hands, turn: 0,
+    round: 1, maxRounds: 6,
+    trump: SUITS[Math.floor(Math.random() * SUITS.length)],
+    trick: [], trickNumber: 0,
+    totalScores: { human: 0, bot1: 0, bot2: 0, bot3: 0 },
+    finished: false,
+    message: "Ronde 1 dari 6 dimulai!"
+  };
+
+  $("start").disabled = true;
+  $("soloMode").disabled = true;
+  renderSoloGame();
+  scheduleBot();
+}
+
+function renderSoloGame() {
+  if (!soloGame) return;
+  const g = soloGame;
+
+  $("players").textContent = g.players.map((p, i) => (i + 1) + ". " + p.name).join(" | ");
+  $("round").textContent = g.round;
+  $("trump").textContent = g.trump;
+  $("trickNumber").textContent = g.trickNumber;
+  $("turn").textContent = g.finished ? "Selesai" : g.players[g.turn].name;
+  $("message").textContent = g.message;
+
+  const hand = g.hands.human;
+  $("remaining").textContent = hand.length;
+  $("hand").innerHTML = "";
+
+  hand.forEach(card => {
+    const b = document.createElement("button");
+    b.className = "card" + (["♥", "♦"].includes(card.suit) ? " red" : "");
+    b.textContent = card.rank + card.suit;
+    b.disabled = g.finished || g.turn !== 0;
+    b.onclick = () => playSoloCard("human", card.id);
+    $("hand").appendChild(b);
+  });
+
+  $("table").innerHTML = "";
+  g.trick.forEach(play => {
+    const el = document.createElement("div");
+    el.className = "played";
+    el.innerHTML = `<div style="font-size:10px; color:#666">${play.name}</div><div style="font-size:16px">${play.card.rank}${play.card.suit}</div>`;
+    $("table").appendChild(el);
+  });
+
+  $("scores").innerHTML = "";
+  g.players.forEach(p => {
+    const el = document.createElement("p");
+    el.style.margin = "4px 0";
+    el.textContent = p.name + ": " + g.totalScores[p.uid] + " Total Trik Dimenangkan";
+    $("scores").appendChild(el);
+  });
+
+  if (g.finished) {
+    showTrophy(g.players, g.totalScores);
+  }
+}
+
+function playSoloCard(uid, cardId) {
+  const g = soloGame;
+  if (!g || g.finished || g.players[g.turn].uid !== uid) return;
+
+  const hand = g.hands[uid];
+  const idx = hand.findIndex(c => c.id === cardId);
+  if (idx < 0) return;
+
+  if (g.trick.length === 4) g.trick = [];
+
+  const card = hand.splice(idx, 1)[0];
+  const player = g.players[g.turn];
+
+  g.trick.push({ uid, name: player.name, card });
+  g.message = player.name + " memainkan " + card.rank + card.suit;
+
+  if (g.trick.length === 4) {
+    const leadSuit = g.trick[0].card.suit;
+    const trumps = g.trick.filter(p => p.card.suit === g.trump);
+    const winningSuit = trumps.length ? g.trump : leadSuit;
+    const eligible = g.trick.filter(p => p.card.suit === winningSuit);
+    eligible.sort((a, b) => b.card.value - a.card.value);
+
+    const winner = eligible[0];
+    g.totalScores[winner.uid]++;
+    g.trickNumber++;
+    g.turn = g.players.findIndex(p => p.uid === winner.uid);
+    g.message = winner.name + " memenangkan trik ke-" + g.trickNumber;
+
+    if (g.trickNumber === 13) {
+      if (g.round >= 6) {
+        g.finished = true;
+        g.message = "🏆 GAMEOVER! Turnamen 6 Ronde Selesai.";
+      } else {
+        // Otomatis lanjut ke ronde berikutnya untuk BOT
+        g.round++;
+        g.trickNumber = 0;
+        g.trump = SUITS[Math.floor(Math.random() * SUITS.length)];
+        const deck = makeDeck();
+        g.players.forEach((p, i) => { g.hands[p.uid] = deck.slice(i * 13, (i + 1) * 13); });
+        g.message = `Lanjut ke Ronde ${g.round} dari 6!`;
+      }
+    }
+  } else {
+    g.turn = (g.turn + 1) % 4;
+  }
+
+  renderSoloGame();
+  scheduleBot();
+}
+
+function scheduleBot() {
+  const g = soloGame;
+  if (!g || g.finished || g.turn === 0) return;
+
+  setTimeout(() => {
+    if (!soloGame || soloGame !== g || g.finished || g.turn === 0) return;
+
+    const uid = g.players[g.turn].uid;
+    const hand = g.hands[uid];
+    let choices = hand;
+
+    if (g.trick.length > 0 && g.trick.length < 4) {
+      const leadSuit = g.trick[0].card.suit;
+      const followSuit = hand.filter(c => c.suit === leadSuit);
+      if (followSuit.length) choices = followSuit;
+    }
+
+    const card = choices[Math.floor(Math.random() * choices.length)];
+    if (card) playSoloCard(uid, card.id);
+  }, 500);
+}
+
+/* FUNGSI MULTIPLAYER ONLINE VIA FIREBASE */
 async function createRoom() {
   if (busy) return;
   busy = true;
@@ -243,7 +390,7 @@ async function createRoom() {
     }
     isSpectator = false;
     listenRoom(code);
-    say("Room berhasil dibuat!");
+    say("Room dibuat!");
   } catch (e) { say("Gagal: " + e.message); }
   finally { busy = false; }
 }
@@ -257,7 +404,7 @@ async function joinRoom(asSpectator) {
     const ref = roomRef(code);
     await runTransaction(db, async tx => {
       const snap = await tx.get(ref);
-      if (!snap.exists()) throw new Error("Room tidak ditemukan.");
+      if (!snap.exists()) throw new Error("Room tidak ada.");
       const data = snap.data();
       const players = [...(data.players || [])];
       if (players.some(p => p.uid === uid)) return;
@@ -284,7 +431,7 @@ function listenRoom(code) {
 function renderRoom() {
   if (!roomData) return;
   const players = roomData.players || [];
-  $("players").textContent = players.length ? players.map((p,i) => `${i+1}.${p.name}`).join(" | ") : "-";
+  $("players").textContent = players.length ? players.map((p,i) => `${i+1}. ${p.name}`).join(" | ") : "-";
   $("round").textContent = roomData.round || 0;
   $("trump").textContent = roomData.trump || "-";
   $("trickNumber").textContent = roomData.trickNumber || 0;
@@ -294,7 +441,6 @@ function renderRoom() {
   $("turn").textContent = cp ? cp.name : "-";
   $("start").disabled = uid !== roomData.hostUid || players.length !== 4 || roomData.status === "playing";
 
-  // KARTU ANDA DITAMPILKAN DI DALAM MEJA PERMAINAN
   const hand = (roomData.hands && roomData.hands[uid]) || [];
   $("remaining").textContent = hand.length;
   $("hand").innerHTML = "";
@@ -307,7 +453,6 @@ function renderRoom() {
     $("hand").appendChild(b);
   });
 
-  // KARTU YANG SEDANG DIMAINKAN DI TENGAH MEJA
   $("table").innerHTML = "";
   (roomData.trick || []).forEach(p => {
     const box = document.createElement("div");
@@ -316,17 +461,15 @@ function renderRoom() {
     $("table").appendChild(box);
   });
 
-  // AKUMULASI SKOR
   const scores = roomData.totalScores || {};
   $("scores").innerHTML = "";
   players.forEach(p => {
     const l = document.createElement("p");
     l.style.margin = "4px 0";
-    l.textContent = `${p.name}:${scores[p.uid] || 0} Total Trik Dimenangkan`;
+    l.textContent = `${p.name}: ${scores[p.uid] || 0} Total Trik Dimenangkan`;
     $("scores").appendChild(l);
   });
 
-  // TAMPILKAN TROPHY JIKA GAME SELESAI (6 RONDE SELESAI)
   if (roomData.status === "finished_game") {
     showTrophy(players, scores);
   }
@@ -347,4 +490,104 @@ function showTrophy(players, scores) {
 
   let leaderboardHtml = "";
   players.forEach(p => {
-    leaderboardHtml += `<div>${p.name}: 
+    leaderboardHtml += `<div>${p.name}: <strong>${scores[p.uid] || 0} Trik</strong></div>`;
+  });
+  $("finalLeaderboard").innerHTML = leaderboardHtml;
+}
+
+async function startRound() {
+  if (!roomId || !roomData || uid !== roomData.hostUid) return;
+  try {
+    await runTransaction(db, async tx => {
+      const ref = roomRef();
+      const data = (await tx.get(ref)).data();
+      const currentRound = (data.round || 0) + 1;
+      if (currentRound > 6) throw new Error("Permainan 6 ronde sudah selesai.");
+
+      const deck = makeDeck();
+      const hands = {};
+      data.players.forEach(p => hands[p.uid] = deck.splice(0, 13));
+      const trump = SUITS[Math.floor(Math.random() * SUITS.length)];
+      const totalScores = data.totalScores || {};
+      data.players.forEach(p => { if(!totalScores[p.uid]) totalScores[p.uid] = 0; });
+
+      tx.update(ref, { 
+        hands, trump, turn: 0, trick: [], trickNumber: 0, 
+        round: currentRound, totalScores, status: "playing", 
+        message: `Ronde ${currentRound} dari 6 dimulai!` 
+      });
+    });
+  } catch (e) { say("Gagal: " + e.message); }
+}
+
+async function playCard(cardId) {
+  if (!roomId || !roomData || isSpectator) return;
+  try {
+    await runTransaction(db, async tx => {
+      const ref = roomRef();
+      const data = (await tx.get(ref)).data();
+      const player = data.players[data.turn];
+      if (!player || player.uid !== uid) return;
+
+      const hands = {...data.hands};
+      const hand = [...(hands[uid] || [])];
+      const idx = hand.findIndex(c => c.id === cardId);
+      if (idx < 0) return;
+      const card = hand.splice(idx, 1)[0];
+      hands[uid] = hand;
+
+      let trick = [...(data.trick || [])];
+      if (trick.length === 4) trick = [];
+      trick.push({ uid, name: player.name, card });
+
+      let nextTurn = (data.turn + 1) % data.players.length;
+      let trickNumber = data.trickNumber || 0;
+      let message = `${player.name} memainkan ${card.rank}${card.suit}`;
+      let status = data.status;
+      const totalScores = {...(data.totalScores || {})};
+
+      if (trick.length === 4) {
+        const leadSuit = trick[0].card.suit;
+        const trumps = trick.filter(p => p.card.suit === data.trump);
+        const winningSuit = trumps.length ? data.trump : leadSuit;
+        const eligible = trick.filter(p => p.card.suit === winningSuit);
+        eligible.sort((a,b) => b.card.value - a.card.value);
+        const winner = eligible[0];
+
+        nextTurn = data.players.findIndex(p => p.uid === winner.uid);
+        trickNumber++;
+        totalScores[winner.uid] = (totalScores[winner.uid] || 0) + 1;
+        message = `${winner.name} memenangkan trik ke-${trickNumber}`;
+
+        if (trickNumber >= 13) {
+          if (data.round >= 6) {
+            status = "finished_game";
+            message = "🏆 GAMEOVER! 6 Ronde Selesai. Selamat kepada Pemenang!";
+          } else {
+            status = "waiting_next_round";
+            message = `Ronde ${data.round} Selesai! Host dapat melanjutkan ke Ronde berikutnya.`;
+          }
+        }
+      }
+
+      tx.update(ref, { hands, trick, turn: nextTurn, trickNumber, totalScores, status, message });
+    });
+  } catch (e) { say("Gagal main kartu: " + e.message); }
+}
+
+async function sendChat() {
+  const text = $("chatText").value.trim();
+  if (!roomId || !text) return;
+  await addDoc(collection(db, "rooms", roomId, "chat"), { uid, name: playerName(), text, createdAt: serverTimestamp() });
+  $("chatText").value = "";
+}
+
+$("create").addEventListener("click", createRoom);
+$("join").addEventListener("click", () => joinRoom(false));
+$("watch").addEventListener("click", () => joinRoom(true));
+$("start").addEventListener("click", startRound);
+$("soloMode").addEventListener("click", startSoloGame);
+$("sendChat").addEventListener("click", sendChat);
+</script>
+</body>
+</html>
