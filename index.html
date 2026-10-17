@@ -3,211 +3,239 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>RAJA TENGKORAK - Meja Kasino 6 Ronde</title>
+<title>RAJA TENGKORAK - Standar Trufy Realistis</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#0b130e;color:#fff;font-family:Arial,sans-serif}
-header{text-align:center;background:#13281c;padding:12px;border-bottom:3px solid #d9b54a}
-h1{margin:0;color:#f5d66e;font-size:22px}
-main{max-width:900px;margin:auto;padding:10px}
-.panel{background:#15241b;border:1px solid #324e39;border-radius:12px;padding:12px;margin-bottom:12px}
-h3{color:#f5d66e;margin-top:0;font-size:16px}
-input{width:100%;padding:10px;margin:5px 0;border-radius:7px;border:0;font-size:14px}
-button{padding:9px 12px;margin:3px 2px;border:0;border-radius:7px;background:#e3bd51;color:#161616;font-weight:bold;font-size:13px;cursor:pointer}
+body{margin:0;background:#080e0a;color:#fff;font-family:Arial,sans-serif;user-select:none}
+header{text-align:center;background:#102217;padding:10px;border-bottom:3px solid #d9b54a}
+h1{margin:0;color:#f5d66e;font-size:20px}
+main{max-width:950px;margin:auto;padding:8px}
+.panel{background:#122117;border:1px solid #2e4a36;border-radius:12px;padding:12px;margin-bottom:10px}
+h3{color:#f5d66e;margin-top:0;font-size:15px}
+input{width:100%;padding:8px;margin:4px 0;border-radius:6px;border:0;font-size:14px}
+button{padding:8px 12px;margin:3px 2px;border:0;border-radius:6px;background:#e3bd51;color:#161616;font-weight:bold;font-size:13px;cursor:pointer}
 button:disabled{opacity:.3;cursor:not-allowed}
-.secondary{background:#2a4431;color:white}
-#status{white-space:pre-wrap;color:#ffdc80;font-size:13px}
+.secondary{background:#284230;color:white}
 
-/* DESAIN MEJA PERMAINAN INTERAKTIF */
+/* DESAIN MEJA KASINO REALISTIS MELINGKAR */
 .casino-table {
-  background: radial-gradient(circle, #1a4d2b 0%, #0d2b17 85%);
-  border: 10px solid #2d1e11;
-  border-radius: 40px;
+  background: radial-gradient(circle, #184b2a 0%, #0a2113 85%);
+  border: 12px solid #2a1c10;
+  border-radius: 50px;
   padding: 15px;
-  min-height: 480px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;
+  height: 520px;
+  display: grid;
+  grid-template-rows: 60px 1fr 140px;
+  grid-template-columns: 120px 1fr 120px;
   position: relative;
-  box-shadow: inset 0 0 40px rgba(0,0,0,0.8), 0 8px 20px rgba(0,0,0,0.6);
-  margin: 10px 0;
+  box-shadow: inset 0 0 50px rgba(0,0,0,0.8), 0 8px 25px rgba(0,0,0,0.7);
 }
 
 .table-header-info {
+  grid-column: 1 / span 3;
   display: flex;
   justify-content: space-between;
-  width: 100%;
+  align-items: center;
   font-size: 13px;
-  background: rgba(0,0,0,0.4);
-  padding: 8px 14px;
+  background: rgba(0,0,0,0.45);
+  padding: 6px 14px;
   border-radius: 8px;
   border: 1px solid rgba(255,255,255,0.1);
+  height: 38px;
 }
 
-.table-center-felt {
-  text-align: center;
-  margin: 10px 0;
-  width: 100%;
-}
-#table{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;min-height:85px;align-items:center}
-.played{background:#fff;color:#171717;padding:6px 10px;border-radius:6px;font-weight:bold;box-shadow:0 4px 10px rgba(0,0,0,0.5);min-width:65px;text-align:center;animation:popIn 0.2s ease-out}
+/* POSISI DUDUK PEMAIN & KARTU YANG DIBUANG */
+.seat { display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+.seat-top { grid-row: 2; grid-column: 2; justify-content: flex-start; }
+.seat-left { grid-row: 2; grid-column: 1; }
+.seat-right { grid-row: 2; grid-column: 3; }
+.seat-bottom { grid-row: 3; grid-column: 1 / span 3; }
 
-@keyframes popIn {
-  0% { transform: scale(0.5); opacity: 0; }
-  100% { transform: scale(1); opacity: 1; }
-}
-
-.player-hand-zone {
-  width: 100%;
-  background: rgba(0, 0, 0, 0.35);
+.player-tag {
+  background: rgba(0,0,0,0.6);
+  padding: 4px 8px;
   border-radius: 12px;
-  padding: 10px;
+  font-size: 11px;
+  border: 1px solid #d9b54a;
+  color: #fff;
+  z-index: 2;
   text-align: center;
-  border: 1px solid rgba(217, 181, 74, 0.3);
 }
-.player-hand-title {
-  font-size: 12px;
-  color: #f5d66e;
-  margin-bottom: 6px;
-  font-weight: bold;
-}
-#hand{display:flex;flex-wrap:wrap;gap:5px;justify-content:center}
-.card{width:50px;height:72px;background:white;color:#171717;border:1px solid #ccc;border-radius:5px;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:16px;font-weight:bold;cursor:pointer;box-shadow:0 3px 6px rgba(0,0,0,0.4);transition:transform 0.15s, background 0.15s}
-.card:hover:not(:disabled){transform:translateY(-10px);background:#fffdf0}
-.red{color:#d63031}
 
-#trophyOverlay {
-  display: none;
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.92);
-  border-radius: 30px;
+/* DESAIN KARTU FISIK ASLI */
+.card-real {
+  width: 52px;
+  height: 75px;
+  background: #ffffff;
+  border-radius: 6px;
+  border: 1px solid #bbb;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+  display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  padding: 4px;
+  font-weight: bold;
+  font-family: 'Courier New', Courier, monospace;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card-real.black { color: #111111; }
+.card-real.red { color: #d63031; }
+
+.card-corner { font-size: 13px; line-height: 1; }
+.card-center { font-size: 22px; text-align: center; align-self: center; }
+
+/* KARTU TERPILIH (TAP PERTAMA) */
+.card-real.selected {
+  transform: translateY(-15px) scale(1.05);
+  border: 2px solid #e3bd51;
+  box-shadow: 0 8px 16px rgba(227, 189, 81, 0.6);
+}
+
+/* AREA BENTANG KARTU TANGAN */
+#hand {
+  display: flex;
+  justify-content: center;
+  gap: -15px;
+  margin-top: 5px;
+}
+
+/* AREA TENGAH MEJA (TRIK) */
+.table-felt-center {
+  grid-row: 2; grid-column: 2;
+  position: relative;
+  display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 10;
-  text-align: center;
-  padding: 20px;
-  animation: fadeIn 0.5s ease;
 }
-.trophy-icon { font-size: 80px; margin-bottom: 10px; animation: bounce 1s infinite alternate; }
-@keyframes bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-15px); } }
-@keyframes fadeIn { 0% { opacity: 0; } 100% { opacity: 1; } }
 
-#chatlog{height:100px;overflow:auto;background:#0a110c;border-radius:7px;padding:8px;font-size:13px}
-.row{display:flex;gap:8px;flex-wrap:wrap}
-.row>*{flex:1}
+/* KARTU DIBUANG TEPAT DI DEPAN PEMAIN */
+.played-slot { position: absolute; transition: all 0.3s ease; }
+.played-top { top: 15px; }
+.played-bottom { bottom: 15px; }
+.played-left { left: 25px; }
+.played-right { right: 25px; }
+
+/* POPUP BIDDING / BID SEBELUM MAIN */
+#bidModal {
+  display: none; position: absolute; top:0; left:0; right:0; bottom:0;
+  background: rgba(0,0,0,0.85); border-radius: 40px;
+  flex-direction: column; justify-content: center; align-items: center;
+  z-index: 20; padding: 20px;
+}
+
+/* POPUP TROPHY */
+#trophyOverlay {
+  display: none; position: absolute; top:0; left:0; right:0; bottom:0;
+  background: rgba(0,0,0,0.92); border-radius: 40px;
+  flex-direction: column; justify-content: center; align-items: center;
+  z-index: 30; text-align: center; padding: 20px;
+}
+.trophy-icon { font-size: 70px; margin-bottom: 5px; animation: bounce 1s infinite alternate; }
+@keyframes bounce { 0% { transform: translateY(0); } 100% { transform: translateY(-12px); } }
+
+/* SKOR & KLASEMEN */
+.score-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; text-align: center; }
+.score-box { background: rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); }
 </style>
 </head>
 <body>
 <header>
-<h1>💀 RAJA TENGKORAK 💀</h1>
-<p style="margin:2px; font-size:12px; color:#c9d6ca">Turnamen 6 Ronde</p>
+<h1>💀 RAJA TENGKORAK - TRUFY 💀</h1>
 </header>
 
 <main>
 <section class="panel">
-<h3>1. Kamar & Pemain</h3>
-<label style="font-size:12px">Nama Anda</label>
-<input id="name" maxlength="20" placeholder="Nama pemain">
-<div class="row">
-<button id="create">Buat Room</button>
-</div>
-<label style="font-size:12px">Kode Room</label>
-<input id="roomCode" maxlength="6" placeholder="Contoh: A1B2C3">
-<div class="row">
-<button id="join">Gabung Pemain</button>
-<button id="watch" class="secondary">Penonton</button>
-</div>
-<p id="status">Siap digunakan.</p>
-<p style="margin:4px 0; font-size:13px">Kode Room: <strong id="shownCode">-</strong> | Pemain: <span id="players">-</span></p>
-<div class="row">
-  <button id="start" disabled>Mulai Game (4 Pemain)</button>
-  <button id="soloMode" class="secondary">Main sendiri vs 3 BOT</button>
+<div style="display:flex; gap:10px; align-items:center;">
+  <input id="name" maxlength="15" placeholder="Nama Anda" value="Pemain">
+  <button id="soloMode">Mulai Game 6 Ronde vs 3 BOT</button>
 </div>
 </section>
 
-<!-- MEJA KASINO UTAMA -->
-<section class="panel" style="padding:5px">
+<!-- MEJA KASINO REALISTIS -->
+<section class="panel" style="padding:4px">
 <div class="casino-table">
   
   <div class="table-header-info">
     <span>Ronde: <strong id="round">0</strong> / 6</span>
-    <span>Truf: <strong id="trump">-</strong></span>
+    <span>Truf: <strong id="trump" style="color:#f5d66e; font-size:16px;">♠ Sekop</strong></span>
     <span>Trik: <strong id="trickNumber">0</strong> / 13</span>
     <span>Giliran: <strong id="turn" style="color:#f5d66e">-</strong></span>
   </div>
 
-  <div class="table-center-felt">
-    <p id="message" style="margin:4px 0; font-size:13px; font-weight:bold; text-shadow:1px 1px 2px #000;">Belum ada permainan di meja.</p>
-    <div id="table"></div>
+  <!-- BOT TOP (UTARA) -->
+  <div class="seat seat-top">
+    <div class="player-tag" id="tag-bot2">BOT 2<br><small id="bid-bot2">Bid: - | Hasil: 0</small></div>
   </div>
 
-  <div class="player-hand-zone">
-    <div class="player-hand-title">🎴 KARTU TANGAN ANDA (Sisa: <span id="remaining">0</span>)</div>
+  <!-- BOT LEFT (BARAT) -->
+  <div class="seat seat-left">
+    <div class="player-tag" id="tag-bot1">BOT 1<br><small id="bid-bot1">Bid: - | Hasil: 0</small></div>
+  </div>
+
+  <!-- BOT RIGHT (TIMUR) -->
+  <div class="seat seat-right">
+    <div class="player-tag" id="tag-bot3">BOT 3<br><small id="bid-bot3">Bid: - | Hasil: 0</small></div>
+  </div>
+
+  <!-- TENGAH MEJA (TEMPAT KARTU DIBUANG) -->
+  <div class="table-felt-center" id="tableFelt">
+    <div id="msg" style="position:absolute; font-size:12px; color:#ddd; text-shadow:1px 1px 2px #000; text-align:center;">Klik "Mulai Game" untuk bermain.</div>
+  </div>
+
+  <!-- PEMAIN UTAMA (SELATAN) -->
+  <div class="seat seat-bottom">
+    <div class="player-tag" id="tag-human">Anda<br><small id="bid-human">Bid: - | Hasil: 0</small></div>
     <div id="hand"></div>
+    <div id="confirmNotice" style="font-size:11px; color:#ffdc80; margin-top:2px; height:14px;"></div>
   </div>
 
+  <!-- MODAL BIDDING TRUFY -->
+  <div id="bidModal">
+    <h3 style="margin-bottom:5px;">Masukkan Permintaan (Bid) Trik</h3>
+    <p style="font-size:12px; color:#ccc; margin-top:0;">Berapa jumlah trik yang Anda yakin menang di ronde ini?</p>
+    <div style="display:flex; gap:5px; flex-wrap:wrap; justify-content:center;">
+      <script>
+        for(let i=0; i<=13; i++){
+          document.write(`<button onclick="submitBid(${i})" style="width:40px">${i}</button>`);
+        }
+      </script>
+    </div>
+  </div>
+
+  <!-- OVERLAY SELEBRASI TROPHY -->
   <div id="trophyOverlay">
     <div class="trophy-icon">🏆</div>
-    <h2 style="color:#f5d66e; margin:5px 0;">PEMENANG TURNAMEN!</h2>
-    <p id="winnerNames" style="font-size:18px; margin:10px 0; font-weight:bold;"></p>
-    <div id="finalLeaderboard" style="font-size:14px; color:#ddd; margin-bottom:15px;"></div>
-    <button onclick="document.getElementById('trophyOverlay').style.display='none'">Tutup & Lihat Meja</button>
+    <h2 style="color:#f5d66e; margin:5px 0;">PEMENANG TURNAMEN TRUFY!</h2>
+    <p id="winnerNames" style="font-size:16px; font-weight:bold;"></p>
+    <div id="finalLeaderboard" style="font-size:13px; color:#ddd; margin-bottom:15px;"></div>
+    <button onclick="document.getElementById('trophyOverlay').style.display='none'">Tutup</button>
   </div>
 
 </div>
 </section>
 
 <section class="panel">
-<h3>2. Skor & Akumulasi Trik ( Total 6 Ronde )</h3>
-<div id="scores" style="font-size:14px">Belum ada skor.</div>
-</section>
-
-<section class="panel">
-<h3>3. Chat Room</h3>
-<div id="chatlog"></div>
-<input id="chatText" maxlength="300" placeholder="Ketik pesan..." style="margin-top:5px">
-<button id="sendChat">Kirim</button>
+<h3>Papan Skor [ Permintaan / Hasil Realisasi ]</h3>
+<div class="score-grid" id="scoresGrid">
+  <div class="score-box"><b>Anda</b><br><span id="score-human">0</span></div>
+  <div class="score-box"><b>BOT 1</b><br><span id="score-bot1">0</span></div>
+  <div class="score-box"><b>BOT 2</b><br><span id="score-bot2">0</span></div>
+  <div class="score-box"><b>BOT 3</b><br><span id="score-bot3">0</span></div>
+</div>
 </section>
 </main>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, updateDoc, onSnapshot, collection, addDoc, query, orderBy, limit, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyCZsrSCwEkW_vaYMHSQJHYvAHE9jd6NWnE",
-  authDomain: "raja-tengkorak.firebaseapp.com",
-  databaseURL: "https://raja-tengkorak-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "raja-tengkorak",
-  storageBucket: "raja-tengkorak.firebasestorage.app",
-  messagingSenderId: "617878909655",
-  appId: "1:617878909655:web:aa3d050fbb7636018c3692",
-  measurementId: "G-Q1GQZ9D5WK"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
+<script>
 const $ = id => document.getElementById(id);
 const SUITS = ["♠","♥","♦","♣"];
 const RANKS = ["2","3","4","5","6","7","8","9","10","J","Q","K","A"];
 
-let uid = "user_" + Math.random().toString(36).substring(2, 9);
-let roomId = null;
-let roomData = null;
-let isSpectator = false;
-let unsubscribeRoom = null;
-let busy = false;
 let soloGame = null;
+let selectedCardId = null; // Menyimpan kartu yang di-tap pertama kali
 
-function say(msg) { $("status").textContent = msg; }
 function playerName() { return $("name").value.trim() || "Pemain"; }
-function roomRef(code = roomId) { return doc(db, "rooms", code); }
 
 function makeDeck() {
   const deck = SUITS.flatMap(suit => RANKS.map((rank, index) => ({ id: suit + rank, suit, rank, value: index + 2 })));
@@ -218,376 +246,261 @@ function makeDeck() {
   return deck;
 }
 
-onAuthStateChanged(auth, user => { if (user) uid = user.uid; });
-signInAnonymously(auth).catch(() => {});
+/* MENGURUTKAN KARTU BERDASARKAN JENIS/SUIT DAHULU, LALU RANK */
+function sortHand(hand) {
+  const suitOrder = { "♠": 1, "♥": 2, "♦": 3, "♣": 4 };
+  return hand.sort((a, b) => {
+    if (suitOrder[a.suit] !== suitOrder[b.suit]) {
+      return suitOrder[a.suit] - suitOrder[b.suit];
+    }
+    return a.value - b.value;
+  });
+}
 
-/* PERMAINAN DENGAN 3 BOT */
 function startSoloGame() {
-  if (roomId) { say("Muat ulang halaman untuk main mode BOT."); return; }
-  
-  const deck = makeDeck();
   const players = [
-    { uid: "human", name: playerName() },
-    { uid: "bot1", name: "BOT Tengkorak 1" },
-    { uid: "bot2", name: "BOT Tengkorak 2" },
-    { uid: "bot3", name: "BOT Tengkorak 3" }
+    { uid: "human", name: playerName(), pos: "bottom" },
+    { uid: "bot1", name: "BOT 1", pos: "left" },
+    { uid: "bot2", name: "BOT 2", pos: "top" },
+    { uid: "bot3", name: "BOT 3", pos: "right" }
   ];
 
-  const hands = {};
-  players.forEach((p, i) => { hands[p.uid] = deck.slice(i * 13, (i + 1) * 13); });
-
   soloGame = {
-    players, hands, turn: 0,
-    round: 1, maxRounds: 6,
-    trump: SUITS[Math.floor(Math.random() * SUITS.length)],
-    trick: [], trickNumber: 0,
+    players, turn: 0, round: 1, maxRounds: 6,
+    trump: "♠", trick: [], trickNumber: 0,
+    bids: {}, tricksWon: { human: 0, bot1: 0, bot2: 0, bot3: 0 },
     totalScores: { human: 0, bot1: 0, bot2: 0, bot3: 0 },
-    finished: false,
-    message: "Ronde 1 dari 6 dimulai!"
+    hands: {}, state: "bidding"
   };
 
-  $("start").disabled = true;
-  $("soloMode").disabled = true;
-  renderSoloGame();
+  startNewRound();
+}
+
+function startNewRound() {
+  const g = soloGame;
+  const deck = makeDeck();
+  g.players.forEach((p, i) => {
+    g.hands[p.uid] = sortHand(deck.slice(i * 13, (i + 1) * 13));
+    g.tricksWon[p.uid] = 0;
+  });
+
+  g.trick = [];
+  g.trickNumber = 0;
+  g.state = "bidding";
+  selectedCardId = null;
+
+  // Bot membuat perkiraan bid otomatis
+  g.players.forEach(p => {
+    if(p.uid !== "human") {
+      const highCards = g.hands[p.uid].filter(c => c.value >= 11 || c.suit === "♠").length;
+      g.bids[p.uid] = Math.min(13, Math.max(1, Math.floor(highCards / 1.5)));
+    }
+  });
+
+  $("bidModal").style.display = "flex";
+  renderGame();
+}
+
+function submitBid(bidValue) {
+  soloGame.bids["human"] = bidValue;
+  $("bidModal").style.display = "none";
+  soloGame.state = "playing";
+  $("msg").textContent = "Ronde " + soloGame.round + " dimulai! Giliran bermain.";
+  renderGame();
   scheduleBot();
 }
 
-function renderSoloGame() {
+function isValidTrufyMove(hand, card, trick) {
+  if (trick.length === 0) return true;
+  const leadSuit = trick[0].card.suit;
+  const hasLeadSuit = hand.some(c => c.suit === leadSuit);
+  if (hasLeadSuit) return card.suit === leadSuit;
+  return true;
+}
+
+/* TAP PERTAMA = SELECT, TAP KEDUA = CONFIRM (BUANG) */
+function handleCardClick(card) {
+  if (soloGame.state !== "playing" || soloGame.turn !== 0) return;
+
+  if (selectedCardId === card.id) {
+    // Tap Kedua -> Konfirmasi Buang
+    playSoloCard("human", card.id);
+    selectedCardId = null;
+    $("confirmNotice").textContent = "";
+  } else {
+    // Tap Pertama -> Pilih Kartu
+    selectedCardId = card.id;
+    $("confirmNotice").textContent = "Tap sekali lagi kartu " + card.rank + card.suit + " untuk mengeluarkan.";
+    renderGame();
+  }
+}
+
+function renderGame() {
   if (!soloGame) return;
   const g = soloGame;
 
-  $("players").textContent = g.players.map((p, i) => (i + 1) + ". " + p.name).join(" | ");
   $("round").textContent = g.round;
-  $("trump").textContent = g.trump;
   $("trickNumber").textContent = g.trickNumber;
-  $("turn").textContent = g.finished ? "Selesai" : g.players[g.turn].name;
-  $("message").textContent = g.message;
+  $("turn").textContent = g.players[g.turn].name;
 
-  const hand = g.hands.human;
-  $("remaining").textContent = hand.length;
-  $("hand").innerHTML = "";
-
-  hand.forEach(card => {
-    const b = document.createElement("button");
-    b.className = "card" + (["♥", "♦"].includes(card.suit) ? " red" : "");
-    b.textContent = card.rank + card.suit;
-    b.disabled = g.finished || g.turn !== 0;
-    b.onclick = () => playSoloCard("human", card.id);
-    $("hand").appendChild(b);
-  });
-
-  $("table").innerHTML = "";
-  g.trick.forEach(play => {
-    const el = document.createElement("div");
-    el.className = "played";
-    el.innerHTML = `<div style="font-size:10px; color:#666">${play.name}</div><div style="font-size:16px">${play.card.rank}${play.card.suit}</div>`;
-    $("table").appendChild(el);
-  });
-
-  $("scores").innerHTML = "";
+  // Render Label Pemain & Bid/Hasil
   g.players.forEach(p => {
-    const el = document.createElement("p");
-    el.style.margin = "4px 0";
-    el.textContent = p.name + ": " + g.totalScores[p.uid] + " Total Trik Dimenangkan";
-    $("scores").appendChild(el);
+    const bidText = g.bids[p.uid] !== undefined ? g.bids[p.uid] : "-";
+    const wonText = g.tricksWon[p.uid] || 0;
+    $(`bid-${p.uid}`).textContent = `Bid: ${bidText} | Hasil: ${wonText}`;
+    $(`score-${p.uid}`).textContent = g.totalScores[p.uid] + " Poin";
   });
 
-  if (g.finished) {
-    showTrophy(g.players, g.totalScores);
-  }
+  // Render Kartu Tangan Pemain Utama (Selatan)
+  const handBox = $("hand");
+  handBox.innerHTML = "";
+  const humanHand = g.hands.human;
+
+  humanHand.forEach(card => {
+    const isRed = card.suit === "♥" || card.suit === "♦";
+    const valid = isValidTrufyMove(humanHand, card, g.trick);
+    const isSelected = selectedCardId === card.id;
+
+    const el = document.createElement("div");
+    el.className = `card-real ${isRed ? 'red' : 'black'} ${isSelected ? 'selected' : ''}`;
+    
+    if (!valid && g.turn === 0) {
+      el.style.opacity = "0.35";
+      el.style.cursor = "not-allowed";
+    }
+
+    el.innerHTML = `
+      <div class="card-corner">${card.rank}<br>${card.suit}</div>
+      <div class="card-center">${card.suit}</div>
+    `;
+
+    if (valid && g.turn === 0) {
+      el.onclick = () => handleCardClick(card);
+    }
+
+    handBox.appendChild(el);
+  });
+
+  // Render Kartu yang dibuang di depan masing-masing pemain
+  const felt = $("tableFelt");
+  felt.querySelectorAll(".played-slot").forEach(e => e.remove());
+
+  g.trick.forEach(play => {
+    const p = g.players.find(pl => pl.uid === play.uid);
+    const isRed = play.card.suit === "♥" || play.card.suit === "♦";
+
+    const el = document.createElement("div");
+    el.className = `card-real played-slot played-${p.pos} ${isRed ? 'red' : 'black'}`;
+    el.innerHTML = `
+      <div class="card-corner">${play.card.rank}<br>${play.card.suit}</div>
+      <div class="card-center">${play.card.suit}</div>
+    `;
+    felt.appendChild(el);
+  });
 }
 
 function playSoloCard(uid, cardId) {
   const g = soloGame;
-  if (!g || g.finished || g.players[g.turn].uid !== uid) return;
+  if (!g || g.state !== "playing" || g.players[g.turn].uid !== uid) return;
 
   const hand = g.hands[uid];
   const idx = hand.findIndex(c => c.id === cardId);
   if (idx < 0) return;
 
+  const card = hand[idx];
+  if (!isValidTrufyMove(hand, card, g.trick)) return;
+
+  hand.splice(idx, 1);
   if (g.trick.length === 4) g.trick = [];
 
-  const card = hand.splice(idx, 1)[0];
   const player = g.players[g.turn];
-
   g.trick.push({ uid, name: player.name, card });
-  g.message = player.name + " memainkan " + card.rank + card.suit;
+  $("msg").textContent = player.name + " mengeluarkan " + card.rank + card.suit;
 
   if (g.trick.length === 4) {
     const leadSuit = g.trick[0].card.suit;
     const trumps = g.trick.filter(p => p.card.suit === g.trump);
-    const winningSuit = trumps.length ? g.trump : leadSuit;
-    const eligible = g.trick.filter(p => p.card.suit === winningSuit);
-    eligible.sort((a, b) => b.card.value - a.card.value);
+    
+    let winner;
+    if (trumps.length > 0) {
+      trumps.sort((a, b) => b.card.value - a.card.value);
+      winner = trumps[0];
+    } else {
+      const eligible = g.trick.filter(p => p.card.suit === leadSuit);
+      eligible.sort((a, b) => b.card.value - a.card.value);
+      winner = eligible[0];
+    }
 
-    const winner = eligible[0];
-    g.totalScores[winner.uid]++;
+    g.tricksWon[winner.uid]++;
     g.trickNumber++;
     g.turn = g.players.findIndex(p => p.uid === winner.uid);
-    g.message = winner.name + " memenangkan trik ke-" + g.trickNumber;
+    $("msg").textContent = winner.name + " memenangkan trik ke-" + g.trickNumber;
 
     if (g.trickNumber === 13) {
+      // Hitung Skor Trufy berdasarkan Kontrak Bid
+      g.players.forEach(p => {
+        const bid = g.bids[p.uid];
+        const won = g.tricksWon[p.uid];
+        if (won >= bid) {
+          g.totalScores[p.uid] += (bid * 10) + (won - bid);
+        } else {
+          g.totalScores[p.uid] -= (bid * 10);
+        }
+      });
+
       if (g.round >= 6) {
-        g.finished = true;
-        g.message = "🏆 GAMEOVER! Turnamen 6 Ronde Selesai.";
+        g.state = "finished";
+        showTrophy();
       } else {
-        // Otomatis lanjut ke ronde berikutnya untuk BOT
         g.round++;
-        g.trickNumber = 0;
-        g.trump = SUITS[Math.floor(Math.random() * SUITS.length)];
-        const deck = makeDeck();
-        g.players.forEach((p, i) => { g.hands[p.uid] = deck.slice(i * 13, (i + 1) * 13); });
-        g.message = `Lanjut ke Ronde ${g.round} dari 6!`;
+        setTimeout(() => { startNewRound(); }, 2000);
       }
     }
   } else {
     g.turn = (g.turn + 1) % 4;
   }
 
-  renderSoloGame();
+  renderGame();
   scheduleBot();
 }
 
 function scheduleBot() {
   const g = soloGame;
-  if (!g || g.finished || g.turn === 0) return;
+  if (!g || g.state !== "playing" || g.turn === 0) return;
 
   setTimeout(() => {
-    if (!soloGame || soloGame !== g || g.finished || g.turn === 0) return;
+    if (!soloGame || soloGame.turn === 0) return;
 
     const uid = g.players[g.turn].uid;
     const hand = g.hands[uid];
-    let choices = hand;
+    let validChoices = hand.filter(c => isValidTrufyMove(hand, c, g.trick));
+    if (validChoices.length === 0) validChoices = hand;
 
-    if (g.trick.length > 0 && g.trick.length < 4) {
-      const leadSuit = g.trick[0].card.suit;
-      const followSuit = hand.filter(c => c.suit === leadSuit);
-      if (followSuit.length) choices = followSuit;
-    }
-
-    const card = choices[Math.floor(Math.random() * choices.length)];
+    const card = validChoices[Math.floor(Math.random() * validChoices.length)];
     if (card) playSoloCard(uid, card.id);
-  }, 500);
+  }, 600);
 }
 
-/* FUNGSI MULTIPLAYER ONLINE VIA FIREBASE */
-async function createRoom() {
-  if (busy) return;
-  busy = true;
-  try {
-    let code = "", created = false;
-    for (let i = 0; i < 5 && !created; i++) {
-      code = Math.random().toString(36).slice(2,8).toUpperCase();
-      const ref = roomRef(code);
-      if (!(await getDoc(ref)).exists()) {
-        await setDoc(ref, {
-          code, hostUid: uid,
-          players: [{ uid, name: playerName(), seat: 0 }],
-          spectators: [], hands: {}, turn: 0, round: 0, maxRounds: 6, trump: null, trick: [], trickNumber: 0, totalScores: {}, status: "waiting", message: "Menunggu 4 pemain..."
-        });
-        created = true;
-      }
-    }
-    isSpectator = false;
-    listenRoom(code);
-    say("Room dibuat!");
-  } catch (e) { say("Gagal: " + e.message); }
-  finally { busy = false; }
-}
-
-async function joinRoom(asSpectator) {
-  if (busy) return;
-  const code = $("roomCode").value.trim().toUpperCase();
-  if (!/^[A-Z0-9]{6}$/.test(code)) { say("Kode harus 6 karakter."); return; }
-  busy = true;
-  try {
-    const ref = roomRef(code);
-    await runTransaction(db, async tx => {
-      const snap = await tx.get(ref);
-      if (!snap.exists()) throw new Error("Room tidak ada.");
-      const data = snap.data();
-      const players = [...(data.players || [])];
-      if (players.some(p => p.uid === uid)) return;
-      if (!asSpectator && players.length >= 4) throw new Error("Kamar penuh.");
-      players.push({ uid, name: playerName(), seat: players.length });
-      tx.update(ref, { players });
-    });
-    isSpectator = asSpectator;
-    listenRoom(code);
-    say("Berhasil masuk!");
-  } catch (e) { say("Gagal: " + e.message); }
-  finally { busy = false; }
-}
-
-function listenRoom(code) {
-  roomId = code;
-  if (unsubscribeRoom) unsubscribeRoom();
-  $("shownCode").textContent = code;
-  unsubscribeRoom = onSnapshot(roomRef(code), snap => {
-    if (snap.exists()) { roomData = snap.data(); renderRoom(); }
-  });
-}
-
-function renderRoom() {
-  if (!roomData) return;
-  const players = roomData.players || [];
-  $("players").textContent = players.length ? players.map((p,i) => `${i+1}. ${p.name}`).join(" | ") : "-";
-  $("round").textContent = roomData.round || 0;
-  $("trump").textContent = roomData.trump || "-";
-  $("trickNumber").textContent = roomData.trickNumber || 0;
-  $("message").textContent = roomData.message || "";
-  
-  const cp = players[roomData.turn];
-  $("turn").textContent = cp ? cp.name : "-";
-  $("start").disabled = uid !== roomData.hostUid || players.length !== 4 || roomData.status === "playing";
-
-  const hand = (roomData.hands && roomData.hands[uid]) || [];
-  $("remaining").textContent = hand.length;
-  $("hand").innerHTML = "";
-  hand.forEach(card => {
-    const b = document.createElement("button");
-    b.className = "card" + (["♥","♦"].includes(card.suit) ? " red" : "");
-    b.textContent = card.rank + card.suit;
-    b.disabled = isSpectator || roomData.status !== "playing" || !cp || cp.uid !== uid;
-    b.onclick = () => playCard(card.id);
-    $("hand").appendChild(b);
-  });
-
-  $("table").innerHTML = "";
-  (roomData.trick || []).forEach(p => {
-    const box = document.createElement("div");
-    box.className = "played";
-    box.innerHTML = `<div style="font-size:10px; color:#666">${p.name}</div><div style="font-size:16px">${p.card.rank}${p.card.suit}</div>`;
-    $("table").appendChild(box);
-  });
-
-  const scores = roomData.totalScores || {};
-  $("scores").innerHTML = "";
-  players.forEach(p => {
-    const l = document.createElement("p");
-    l.style.margin = "4px 0";
-    l.textContent = `${p.name}: ${scores[p.uid] || 0} Total Trik Dimenangkan`;
-    $("scores").appendChild(l);
-  });
-
-  if (roomData.status === "finished_game") {
-    showTrophy(players, scores);
-  }
-}
-
-function showTrophy(players, scores) {
+function showTrophy() {
   const overlay = $("trophyOverlay");
   overlay.style.display = "flex";
   
-  let maxScore = -1;
-  players.forEach(p => {
-    const s = scores[p.uid] || 0;
-    if (s > maxScore) maxScore = s;
+  let maxScore = -999;
+  soloGame.players.forEach(p => {
+    if (soloGame.totalScores[p.uid] > maxScore) maxScore = soloGame.totalScores[p.uid];
   });
 
-  const winners = players.filter(p => (scores[p.uid] || 0) === maxScore);
-  $("winnerNames").textContent = winners.map(w => w.name).join(", ") + ` (${maxScore} Trik)`;
+  const winners = soloGame.players.filter(p => soloGame.totalScores[p.uid] === maxScore);
+  $("winnerNames").textContent = winners.map(w => w.name).join(", ") + ` (${maxScore} Poin)`;
 
   let leaderboardHtml = "";
-  players.forEach(p => {
-    leaderboardHtml += `<div>${p.name}: <strong>${scores[p.uid] || 0} Trik</strong></div>`;
+  soloGame.players.forEach(p => {
+    leaderboardHtml += `<div>${p.name}: <strong>${soloGame.totalScores[p.uid]} Poin</strong></div>`;
   });
   $("finalLeaderboard").innerHTML = leaderboardHtml;
 }
 
-async function startRound() {
-  if (!roomId || !roomData || uid !== roomData.hostUid) return;
-  try {
-    await runTransaction(db, async tx => {
-      const ref = roomRef();
-      const data = (await tx.get(ref)).data();
-      const currentRound = (data.round || 0) + 1;
-      if (currentRound > 6) throw new Error("Permainan 6 ronde sudah selesai.");
-
-      const deck = makeDeck();
-      const hands = {};
-      data.players.forEach(p => hands[p.uid] = deck.splice(0, 13));
-      const trump = SUITS[Math.floor(Math.random() * SUITS.length)];
-      const totalScores = data.totalScores || {};
-      data.players.forEach(p => { if(!totalScores[p.uid]) totalScores[p.uid] = 0; });
-
-      tx.update(ref, { 
-        hands, trump, turn: 0, trick: [], trickNumber: 0, 
-        round: currentRound, totalScores, status: "playing", 
-        message: `Ronde ${currentRound} dari 6 dimulai!` 
-      });
-    });
-  } catch (e) { say("Gagal: " + e.message); }
-}
-
-async function playCard(cardId) {
-  if (!roomId || !roomData || isSpectator) return;
-  try {
-    await runTransaction(db, async tx => {
-      const ref = roomRef();
-      const data = (await tx.get(ref)).data();
-      const player = data.players[data.turn];
-      if (!player || player.uid !== uid) return;
-
-      const hands = {...data.hands};
-      const hand = [...(hands[uid] || [])];
-      const idx = hand.findIndex(c => c.id === cardId);
-      if (idx < 0) return;
-      const card = hand.splice(idx, 1)[0];
-      hands[uid] = hand;
-
-      let trick = [...(data.trick || [])];
-      if (trick.length === 4) trick = [];
-      trick.push({ uid, name: player.name, card });
-
-      let nextTurn = (data.turn + 1) % data.players.length;
-      let trickNumber = data.trickNumber || 0;
-      let message = `${player.name} memainkan ${card.rank}${card.suit}`;
-      let status = data.status;
-      const totalScores = {...(data.totalScores || {})};
-
-      if (trick.length === 4) {
-        const leadSuit = trick[0].card.suit;
-        const trumps = trick.filter(p => p.card.suit === data.trump);
-        const winningSuit = trumps.length ? data.trump : leadSuit;
-        const eligible = trick.filter(p => p.card.suit === winningSuit);
-        eligible.sort((a,b) => b.card.value - a.card.value);
-        const winner = eligible[0];
-
-        nextTurn = data.players.findIndex(p => p.uid === winner.uid);
-        trickNumber++;
-        totalScores[winner.uid] = (totalScores[winner.uid] || 0) + 1;
-        message = `${winner.name} memenangkan trik ke-${trickNumber}`;
-
-        if (trickNumber >= 13) {
-          if (data.round >= 6) {
-            status = "finished_game";
-            message = "🏆 GAMEOVER! 6 Ronde Selesai. Selamat kepada Pemenang!";
-          } else {
-            status = "waiting_next_round";
-            message = `Ronde ${data.round} Selesai! Host dapat melanjutkan ke Ronde berikutnya.`;
-          }
-        }
-      }
-
-      tx.update(ref, { hands, trick, turn: nextTurn, trickNumber, totalScores, status, message });
-    });
-  } catch (e) { say("Gagal main kartu: " + e.message); }
-}
-
-async function sendChat() {
-  const text = $("chatText").value.trim();
-  if (!roomId || !text) return;
-  await addDoc(collection(db, "rooms", roomId, "chat"), { uid, name: playerName(), text, createdAt: serverTimestamp() });
-  $("chatText").value = "";
-}
-
-$("create").addEventListener("click", createRoom);
-$("join").addEventListener("click", () => joinRoom(false));
-$("watch").addEventListener("click", () => joinRoom(true));
-$("start").addEventListener("click", startRound);
 $("soloMode").addEventListener("click", startSoloGame);
-$("sendChat").addEventListener("click", sendChat);
 </script>
 </body>
 </html>
