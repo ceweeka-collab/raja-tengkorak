@@ -29,15 +29,7 @@
         .btn:disabled { background: #55483d; color: #888; cursor: not-allowed; }
         .btn-outline { background: transparent; border: 1px solid #e07a48; color: #e07a48; }
         .btn-success { background: #2e7d32; color: #fff; }
-        .btn-share { background: #25D366; color: #fff; }
         .btn-danger { background: #b71c1c; color: #fff; }
-
-        /* KOTAK SEJARAH DI LOBBY */
-        .history-box { background: #211c18; border: 1px solid #3d3228; border-radius: 10px; padding: 10px; margin-top: 10px; font-size: 11px; }
-        .history-title { color: #e07a48; font-weight: bold; font-size: 13px; text-align: center; margin-bottom: 8px; border-bottom: 1px solid #332b24; padding-bottom: 4px; }
-        .history-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; text-align: left; }
-        .history-card { background: #15120f; padding: 6px; border-radius: 6px; border: 1px solid #2a231d; }
-        .history-card span { color: #e07a48; font-weight: bold; }
 
         .top-bar { display: flex; justify-content: space-between; padding: 5px 6px; background: #241f1a; font-size: 9px; align-items: center; border-bottom: 1px solid #332b24; }
         .badge { background: #332a22; padding: 3px 5px; border-radius: 5px; font-weight: 600; }
@@ -70,9 +62,9 @@
 
         .table-slot { position: absolute; width: 64px; height: 90px; border: 1px dashed rgba(255,255,255,0.08); border-radius: 12px; display: flex; justify-content: center; align-items: center; z-index: 2; }
         
-        #slot-Verdo { top: -8px; left: 88px; }
-        #slot-Bangkoes { top: 50px; left: -4px; }
-        #slot-Hesmin { top: 50px; right: -4px; }
+        #slot-P2 { top: -8px; left: 88px; }
+        #slot-P3 { top: 50px; left: -4px; }
+        #slot-P4 { top: 50px; right: -4px; }
         #slot-You { bottom: -8px; left: 88px; }
 
         .card { width: 64px; height: 90px; background: #fdfbf7 !important; color: #111; border-radius: 12px; padding: 5px; font-weight: bold; display: flex; flex-direction: column; justify-content: space-between; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.6); border: 1px solid #dcd6cd; position: absolute; user-select: none; transition: transform 0.2s; }
@@ -126,23 +118,6 @@
         .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 20; padding: 15px; }
         .modal-content { background: #241f1a; border: 1px solid #3d3228; border-radius: 14px; padding: 14px; width: 100%; max-width: 360px; text-align: center; display: flex; flex-direction: column; align-items: center; box-shadow: 0 10px 25px rgba(0,0,0,0.9); max-height: 90vh; overflow-y: auto; }
         
-        .modal-celebration {
-            background: linear-gradient(135deg, #3d1b00, #12100e) !important;
-            border: 2px solid #ff9800 !important;
-            max-width: 380px !important;
-            box-shadow: 0 0 50px rgba(255, 152, 0, 0.8) !important;
-        }
-
-        .voucher-box {
-            background: linear-gradient(135deg, #e07a48, #b71c1c);
-            color: #fff;
-            padding: 10px;
-            border-radius: 10px;
-            margin: 10px 0;
-            border: 2px dashed #fff;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-        }
-
         .score-table { width: 100%; border-collapse: collapse; margin-top: 6px; font-size: 11px; }
         .score-table th { background: #332a22; color: #e07a48; padding: 6px 4px; text-align: center; border: 1px solid #3d3228; }
         .score-table td { padding: 5px 4px; text-align: center; border: 1px solid #2a231d; background: #15120f; }
@@ -163,18 +138,19 @@
 <body>
 
 <div class="app-container" id="app-root">
+    <!-- AUTH SCREEN -->
     <div id="auth-screen" class="screen">
         <h2>RAJA TENGKORAK</h2>
         <div class="form-group">
             <label>Nama Pemain</label>
-            <input type="text" id="username" class="form-control" value="RAJA TENGKORAK">
+            <input type="text" id="username" class="form-control" placeholder="Masukkan Nama Anda...">
         </div>
         <button class="btn" onclick="submitAuth()">Masuk Permainan</button>
     </div>
 
-    <!-- LOBBY + PILIHAN RONDE: 3, 6, 9 (DEFAULT 6) -->
+    <!-- LOBBY SCREEN -->
     <div id="lobby-screen" class="screen hidden">
-        <h2>LOBBY MEJA</h2>
+        <h2>LOBBY UTAMA</h2>
         
         <div class="form-group" style="background:#241f1a; padding:8px; border-radius:8px; border:1px solid #332b24;">
             <label style="color:#e07a48; font-weight:bold; font-size:11px;">🎯 Pilih Jumlah Ronde Main:</label>
@@ -185,61 +161,46 @@
             </select>
         </div>
 
-        <button class="btn" onclick="startGame()">Mulai Latihan vs Bot</button>
+        <button class="btn btn-success" onclick="joinMainRoom()" style="padding:15px; font-size:16px; margin-top: 15px;">🎮 GABUNG / MASUK ROOM UTAMA</button>
         
-        <div class="history-box">
-            <div class="history-title">📊 SEJARAH & HIGHLIGHT PERTANDINGAN</div>
-            <div class="history-grid">
-                <div class="history-card">👑 Top Rank (Juara): <br><span id="hist-top-rank">-</span></div>
-                <div class="history-card">💀 Paling Sering Kalah: <br><span id="hist-most-loss">-</span></div>
-                <div class="history-card">🎮 Total Main: <br><span id="hist-total-games">0 Game</span></div>
-                <div class="history-card">⭐ Poin Tertinggi: <br><span id="hist-high-score">0 Poin</span></div>
-            </div>
-        </div>
-
-        <hr style="border:0; border-top:1px solid #332b24; margin:12px 0;">
-        
-        <h3 style="color:#a8988a; font-size:13px; margin-bottom:8px; text-align:center;">MAIN ONLINE DENGAN TEMAN</h3>
-        <button class="btn btn-outline" onclick="createOnlineRoomUI()">+ Buat Room Baru</button>
-        
-        <div class="form-group" style="margin-top:8px;">
-            <input type="text" id="room-code-input" class="form-control" placeholder="Masukkan Kode Room (misal: RT-123)">
-            <button class="btn" style="background:#4CAF50;" onclick="joinOnlineRoomUI()">Gabung Room Teman / Penonton</button>
+        <div style="margin-top: 20px; font-size: 12px; color: #a8988a; text-align: center; line-height: 1.5;">
+            Room bersifat publik dan otomatis tanpa kode.<br>Siapa saja yang masuk akan langsung bergabung dalam 1 meja yang sama secara online!
         </div>
     </div>
 
+    <!-- GAME SCREEN -->
     <div id="game-screen" class="screen hidden" style="padding:0; justify-content:space-between;">
         <div class="top-bar">
             <span class="badge" id="round-text">Ronde 1/6</span>
             <span class="badge" id="mode-text" style="color:#e07a48;">Mode: -</span>
             <span class="badge" id="trump-text">Truf: -</span>
             <button class="btn-mini" onclick="openScoreModal()">Skor</button>
-            <button class="btn btn-danger" style="width:auto; padding:2px 5px; font-size:9px; margin:0;" onclick="endGame()">Keluar</button>
+            <button class="btn btn-danger" style="width:auto; padding:2px 5px; font-size:9px; margin:0;" onclick="leaveRoom()">Keluar</button>
         </div>
 
         <div class="opponents-grid">
             <div class="p-box">
-                <div class="avatar-sm">B</div>
-                <span class="p-name" id="name-b">Bangkoes</span>
-                T:<span id="t-b">0</span> W:<span id="w-b">0</span><br>
-                <span style="color:#e07a48; font-weight:bold;">Skor: <span id="s-b">0</span></span>
+                <div class="avatar-sm" id="avatar-P2">P2</div>
+                <span class="p-name" id="name-P2">Menunggu...</span>
+                T:<span id="t-P2">0</span> W:<span id="w-P2">0</span><br>
+                <span style="color:#e07a48; font-weight:bold;">Skor: <span id="s-P2">0</span></span>
             </div>
             <div class="p-box">
-                <div class="avatar-sm">V</div>
-                <span class="p-name" id="name-v">Verdo</span>
-                T:<span id="t-v">0</span> W:<span id="w-v">0</span><br>
-                <span style="color:#e07a48; font-weight:bold;">Skor: <span id="s-v">0</span></span>
+                <div class="avatar-sm" id="avatar-P3">P3</div>
+                <span class="p-name" id="name-P3">Menunggu...</span>
+                T:<span id="t-P3">0</span> W:<span id="w-P3">0</span><br>
+                <span style="color:#e07a48; font-weight:bold;">Skor: <span id="s-P3">0</span></span>
             </div>
             <div class="p-box">
-                <div class="avatar-sm">H</div>
-                <span class="p-name" id="name-h">Hesmin</span>
-                T:<span id="t-h">0</span> W:<span id="w-h">0</span><br>
-                <span style="color:#e07a48; font-weight:bold;">Skor: <span id="s-h">0</span></span>
+                <div class="avatar-sm" id="avatar-P4">P4</div>
+                <span class="p-name" id="name-P4">Menunggu...</span>
+                T:<span id="t-P4">0</span> W:<span id="w-P4">0</span><br>
+                <span style="color:#e07a48; font-weight:bold;">Skor: <span id="s-P4">0</span></span>
             </div>
         </div>
 
         <div class="table-area">
-            <div class="status-msg" id="status-msg">Silakan Lakukan Bidding Terlebih Dahulu!</div>
+            <div class="status-msg" id="status-msg">Menunggu pemain lain bergabung ke room...</div>
             
             <div class="table-board">
                 <div id="egg-explosion">🥚</div>
@@ -258,16 +219,16 @@
                     </div>
                 </div>
 
-                <div class="table-slot" id="slot-Verdo"></div>
-                <div class="table-slot" id="slot-Bangkoes"></div>
-                <div class="table-slot" id="slot-Hesmin"></div>
+                <div class="table-slot" id="slot-P2"></div>
+                <div class="table-slot" id="slot-P3"></div>
+                <div class="table-slot" id="slot-P4"></div>
                 <div class="table-slot" id="slot-You"></div>
             </div>
         </div>
 
         <div class="bottom-area">
             <div class="my-info">
-                <b id="my-name-game" style="color:#e07a48; font-size:11.5px;">RAJA TENGKORAK (You)</b>
+                <b id="my-name-game" style="color:#e07a48; font-size:11.5px;">Pemain (You)</b>
                 <div>
                     Target: <b id="my-target" style="color:#e07a48;">0</b> | 
                     Win: <b id="my-win" style="color:#4CAF50;">0</b> | 
@@ -301,25 +262,21 @@
     <div id="score-modal" class="modal hidden">
         <div class="modal-content">
             <h3 style="color:#e07a48; margin-bottom:10px;">REKAP POIN</h3>
-            <div id="score-list-content" style="width:100%; font-size:12px; text-align:left; margin-bottom:12px;">
-            </div>
+            <div id="score-list-content" style="width:100%; font-size:12px; text-align:left; margin-bottom:12px;"></div>
             <button class="btn" onclick="closeScoreModal()">Tutup</button>
         </div>
     </div>
 
-    <!-- REKAP RONDE / SELEBRASI MERIAH -->
+    <!-- REKAP RONDE MODAL -->
     <div id="round-end-modal" class="modal hidden">
         <div class="modal-content" id="round-modal-content-box">
             <h3 id="round-end-title" style="color:#e07a48; margin-bottom:8px;">REKAP AKHIR RONDE</h3>
-            <div id="round-end-content" style="width:100%; font-size:12px; margin-bottom:12px;">
-            </div>
-            <button class="btn btn-share hidden" id="btn-share-result" onclick="shareGameResult()">📲 Bagikan Keberhasilan</button>
-            <button class="btn btn-success hidden" id="btn-restart-game" onclick="restartGameByWinner()">🔄 Main Lagi (Khusus Pemenang)</button>
-            <button class="btn" id="btn-proceed-round" onclick="proceedNextRoundOrFinish()">Lanjut</button>
+            <div id="round-end-content" style="width:100%; font-size:12px; margin-bottom:12px;"></div>
+            <button class="btn" id="btn-proceed-round" onclick="proceedNextRound()">Lanjut Ronde Berikutnya</button>
         </div>
     </div>
 
-    <!-- MODAL PERINGATAN MERAH KUSTOM -->
+    <!-- MODAL PERINGATAN KEMBANG -->
     <div id="alert-modal" class="modal hidden">
         <div class="modal-content modal-alert">
             <h3>JANGAN PURA2 NDAK PUNYA!!</h3>
@@ -347,9 +304,9 @@
     // ---------------------------------
 
     let audioCtx = null;
-    let celebInterval = null;
-    let fireworkTimer = null;
-    let isSpectator = false;
+    let myName = '';
+    let assignedSeat = null; 
+    let roomRef = db.ref('public_room');
 
     function initAudio() {
         if (!audioCtx) {
@@ -357,235 +314,123 @@
         }
     }
 
-    function speakOverbidVoice() {
-        if ('speechSynthesis' in window) {
-            let msg = new SpeechSynthesisUtterance("Enjeeeeei, lebih!");
-            msg.lang = 'id-ID';
-            msg.pitch = 0.8;
-            msg.rate = 1.0;
-            window.speechSynthesis.speak(msg);
-        }
-    }
-
-    function speakSlipZeroVoice() {
-        if ('speechSynthesis' in window) {
-            let msg = new SpeechSynthesisUtterance("ooohh jebolll!");
-            msg.lang = 'id-ID';
-            msg.pitch = 0.7;
-            msg.rate = 0.95;
-            window.speechSynthesis.speak(msg);
-        }
-    }
-
-    function speakFunnyExtraVoice() {
-        if ('speechSynthesis' in window) {
-            let phrases = ["Waduh, jebol lagi!", "Aduh masi nambah!", "Ups, kebablasan!"];
-            let chosen = phrases[Math.floor(Math.random() * phrases.length)];
-            let msg = new SpeechSynthesisUtterance(chosen);
-            msg.lang = 'id-ID';
-            msg.pitch = 0.9;
-            msg.rate = 1.0;
-            window.speechSynthesis.speak(msg);
-        }
-    }
-
-    function speakNoTrumpShortcutVoice() {
-        if ('speechSynthesis' in window) {
-            let msg = new SpeechSynthesisUtterance("Astaga no truf, pasti cari jalan pintas nih");
-            msg.lang = 'id-ID';
-            msg.pitch = 1.0;
-            msg.rate = 1.0;
-            window.speechSynthesis.speak(msg);
-        }
-    }
-
-    function speakGoatBleatVoice() {
-        if ('speechSynthesis' in window) {
-            let msg = new SpeechSynthesisUtterance("Mbeeeeeeek!");
-            msg.lang = 'id-ID';
-            msg.pitch = 1.4;
-            msg.rate = 1.1;
-            window.speechSynthesis.speak(msg);
-        }
-    }
-
-    function launchFireworks() {
-        const root = document.getElementById('app-root');
-        const colors = ['#ffeb3b', '#e07a48', '#2196f3', '#4caf50', '#e91e63', '#ffffff'];
-
-        for (let i = 0; i < 25; i++) {
-            const p = document.createElement('div');
-            p.className = 'firework-particle';
-            p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            p.style.top = `${20 + Math.random() * 60}%`;
-            p.style.left = `${20 + Math.random() * 60}%`;
-
-            const angle = Math.random() * Math.PI * 2;
-            const dist = 60 + Math.random() * 100;
-            const dx = `${Math.cos(angle) * dist}px`;
-            const dy = `${Math.sin(angle) * dist}px`;
-
-            p.style.setProperty('--dx', dx);
-            p.style.setProperty('--dy', dy);
-
-            root.appendChild(p);
-
-            setTimeout(() => p.remove(), 1200);
-        }
-    }
-
-    function startFireworkLoop() {
-        stopFireworkLoop();
-        launchFireworks();
-        fireworkTimer = setInterval(launchFireworks, 1500);
-    }
-
-    function stopFireworkLoop() {
-        if (fireworkTimer) {
-            clearInterval(fireworkTimer);
-            fireworkTimer = null;
-        }
-    }
-
-    function playEggCrackSound() {
+    function playCardSound() {
         try {
             initAudio();
             if (!audioCtx) return;
             let now = audioCtx.currentTime;
-
-            let bufferSize = audioCtx.sampleRate * 0.25;
-            let buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-            let data = buffer.getChannelData(0);
-            for (let i = 0; i < bufferSize; i++) {
-                data[i] = Math.random() * 2 - 1;
-            }
-
-            let noise = audioCtx.createBufferSource();
-            noise.buffer = buffer;
-
-            let filter = audioCtx.createBiquadFilter();
-            filter.type = 'bandpass';
-            filter.frequency.setValueAtTime(1200, now);
-            filter.frequency.exponentialRampToValueAtTime(300, now + 0.25);
-            filter.Q.setValueAtTime(4, now);
-
+            let osc = audioCtx.createOscillator();
             let gain = audioCtx.createGain();
-            gain.gain.setValueAtTime(0.8, now);
-            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-
-            noise.connect(filter);
-            filter.connect(gain);
+            osc.connect(gain);
             gain.connect(audioCtx.destination);
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(300, now);
+            osc.frequency.exponentialRampToValueAtTime(80, now + 0.08);
+            gain.gain.setValueAtTime(0.25, now);
+            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+            osc.start(now);
+            osc.stop(now + 0.1);
+        } catch(e) {}
+    }
 
-            noise.start(now);
-            noise.stop(now + 0.25);
-        } catch(e) {
-            console.log("Egg sound error", e);
+    function submitAuth() {
+        initAudio();
+        let inputVal = document.getElementById('username').value.trim();
+        if (!inputVal) {
+            alert("Silakan masukkan nama Anda terlebih dahulu!");
+            return;
         }
+        myName = inputVal;
+        document.getElementById('my-name-game').innerText = `${myName} (You)`;
+        document.getElementById('auth-screen').classList.add('hidden');
+        document.getElementById('lobby-screen').classList.remove('hidden');
     }
 
-    function triggerEggExplosion() {
-        playEggCrackSound();
-        const eggEl = document.getElementById('egg-explosion');
-        eggEl.innerText = '🥚';
-        eggEl.classList.add('show');
-
-        setTimeout(() => {
-            eggEl.innerText = '🍳';
-        }, 150);
-
-        setTimeout(() => {
-            eggEl.classList.remove('show');
-        }, 1100);
-    }
-
-    function startNonstopGrandCelebration() {
-        stopCelebrationSound();
-        playGrandCelebrationMelody();
-        startFireworkLoop();
-        celebInterval = setInterval(() => {
-            playGrandCelebrationMelody();
-        }, 1600);
-    }
-
-    function stopCelebrationSound() {
-        if (celebInterval) {
-            clearInterval(celebInterval);
-            celebInterval = null;
-        }
-        stopFireworkLoop();
-    }
-
-    function playGrandCelebrationMelody() {
-        try {
-            initAudio();
-            if (!audioCtx) return;
-            let now = audioCtx.currentTime;
-            const melody = [
-                {f: 261.63, t: 0, d: 0.12}, {f: 329.63, t: 0.12, d: 0.12}, {f: 392.00, t: 0.24, d: 0.12},
-                {f: 523.25, t: 0.36, d: 0.25}, {f: 392.00, t: 0.65, d: 0.12}, {f: 523.25, t: 0.80, d: 0.45},
-                {f: 659.25, t: 1.28, d: 0.25}
-            ];
-            melody.forEach(note => {
-                let osc = audioCtx.createOscillator();
-                let gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(note.f, now + note.t);
-                gain.gain.setValueAtTime(0.35, now + note.t);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + note.t + note.d);
-                osc.start(now + note.t);
-                osc.stop(now + note.t + note.d);
-            });
-        } catch(e) {
-            console.log("Celebration sound error", e);
-        }
-    }
-
-    function playCardSound(type = 'normal') {
-        try {
-            initAudio();
-            if (!audioCtx) return;
-
-            let now = audioCtx.currentTime;
-
-            if (type === 'celebration') {
-                const notes = [261.63, 329.63, 392.00, 523.25];
-                notes.forEach((freq, idx) => {
-                    let osc = audioCtx.createOscillator();
-                    let gain = audioCtx.createGain();
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-
-                    osc.type = 'triangle';
-                    osc.frequency.setValueAtTime(freq, now + idx * 0.1);
-                    gain.gain.setValueAtTime(0.3, now + idx * 0.1);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.1 + 0.25);
-
-                    osc.start(now + idx * 0.1);
-                    osc.stop(now + idx * 0.1 + 0.25);
-                });
-
-            } else {
-                let osc = audioCtx.createOscillator();
-                let gain = audioCtx.createGain();
-                osc.connect(gain);
-                gain.connect(audioCtx.destination);
-
-                osc.type = 'triangle';
-                osc.frequency.setValueAtTime(300, now);
-                osc.frequency.exponentialRampToValueAtTime(80, now + 0.08);
-
-                gain.gain.setValueAtTime(0.25, now);
-                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
-
-                osc.start(now);
-                osc.stop(now + 0.1);
+    function joinMainRoom() {
+        let maxRoundsVal = parseInt(document.getElementById('round-select').value);
+        
+        roomRef.transaction((room) => {
+            if (!room) {
+                room = {
+                    maxRounds: maxRoundsVal,
+                    round: 1,
+                    status: 'waiting',
+                    players: { You: myName }
+                };
+                assignedSeat = 'You';
+                return room;
             }
-        } catch(e) {
-            console.log("Audio error", e);
+
+            if (!room.players) room.players = {};
+
+            for (let seat in room.players) {
+                if (room.players[seat] === myName) {
+                    assignedSeat = seat;
+                    return room;
+                }
+            }
+
+            let seats = ['You', 'P2', 'P3', 'P4'];
+            for (let s of seats) {
+                if (!room.players[s]) {
+                    room.players[s] = myName;
+                    assignedSeat = s;
+                    return room;
+                }
+            }
+
+            return; 
+        }, (error, committed) => {
+            if (committed) {
+                document.getElementById('lobby-screen').classList.add('hidden');
+                document.getElementById('game-screen').classList.remove('hidden');
+                initRealtimeListeners();
+            } else {
+                alert("Room Utama sedang penuh (maksimal 4 pemain)! Silakan tunggu beberapa saat.");
+            }
+        });
+    }
+
+    function initRealtimeListeners() {
+        roomRef.child('players').child(assignedSeat).onDisconnect().remove();
+
+        roomRef.on('value', (snapshot) => {
+            let data = snapshot.val();
+            if (!data) return;
+
+            let playersMap = data.players || {};
+            ['You', 'P2', 'P3', 'P4'].forEach(seat => {
+                let pName = playersMap[seat] || 'Menunggu...';
+                if (seat !== 'You') {
+                    document.getElementById(`name-${seat}`).innerText = pName;
+                    document.getElementById(`avatar-${seat}`).innerText = pName !== 'Menunggu...' ? pName.charAt(0).toUpperCase() : seat;
+                }
+            });
+
+            let activeCount = Object.keys(playersMap).length;
+            if (activeCount < 2 && data.status === 'waiting') {
+                document.getElementById('status-msg').innerText = `Menunggu pemain lain bergabung (${activeCount}/4)...`;
+            } else if (data.status === 'waiting' && activeCount >= 2 && assignedSeat === 'You') {
+                roomRef.update({ status: 'bidding' });
+            }
+        });
+    }
+
+    function leaveRoom() {
+        if (assignedSeat) {
+            roomRef.child('players').child(assignedSeat).remove().then(() => {
+                window.location.reload();
+            });
+        } else {
+            window.location.reload();
         }
+    }
+
+    function getCardDisplayContent(val, suit) {
+        if (val === 'J') return `<div style="line-height: 1.1; font-size: 16px; font-weight: bold;">🛡️<br><span style="font-size: 24px;">💂‍♂️</span><br><span style="font-size: 11px;">${suit}</span></div>`;
+        if (val === 'Q') return `<div style="line-height: 1.1; font-size: 16px; font-weight: bold;">💎<br><span style="font-size: 24px;">👸</span><br><span style="font-size: 11px;">${suit}</span></div>`;
+        if (val === 'K') return `<div style="line-height: 1.1; font-size: 16px; font-weight: bold;">👑<br><span style="font-size: 24px;">🤴</span><br><span style="font-size: 11px;">${suit}</span></div>`;
+        return suit;
     }
 
     function showAlertModal(suit) {
@@ -597,803 +442,9 @@
         document.getElementById('alert-modal').classList.add('hidden');
     }
 
-    let currentRound = 1;
-    let maxRounds = 6;
-    let playerHand = [];
-    let selectedBidCards = [];
-    let selectedPlayCard = null;
-    let activeTrump = null; 
-    let gameMode = 'MAIN BAWAH';
-
-    let players = ['You', 'Bangkoes', 'Verdo', 'Hesmin'];
-    let playerHands = { 'You': [], 'Bangkoes': [], 'Verdo': [], 'Hesmin': [] };
-    let playerTargets = { 'You': 0, 'Bangkoes': 0, 'Verdo': 0, 'Hesmin': 0 };
-    let playerBidDetails = { 'You': null, 'Bangkoes': null, 'Verdo': null, 'Hesmin': null };
-    
-    let playerWins = { 'You': 0, 'Bangkoes': 0, 'Verdo': 0, 'Hesmin': 0 };
-    let playerTotalScores = { 'You': 0, 'Bangkoes': 0, 'Verdo': 0, 'Hesmin': 0 };
-
-    let currentTurnIndex = 0;
-    let currentTrickCards = [];
-
-    const suitWeight = { '♦': 1, '♣': 2, '♥': 3, '♠': 4 };
-    const cardRank = { '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9, '10': 10, 'J': 11, 'Q': 12, 'K': 13, 'A': 14 };
-
-    function getCardDisplayContent(val, suit) {
-        if (val === 'J') {
-            return `<div style="line-height: 1.1; font-size: 16px; font-weight: bold;">🛡️<br><span style="font-size: 24px;">💂‍♂️</span><br><span style="font-size: 11px;">${suit}</span></div>`;
-        }
-        if (val === 'Q') {
-            return `<div style="line-height: 1.1; font-size: 16px; font-weight: bold;">💎<br><span style="font-size: 24px;">👸</span><br><span style="font-size: 11px;">${suit}</span></div>`;
-        }
-        if (val === 'K') {
-            return `<div style="line-height: 1.1; font-size: 16px; font-weight: bold;">👑<br><span style="font-size: 24px;">🤴</span><br><span style="font-size: 11px;">${suit}</span></div>`;
-        }
-        return suit;
-    }
-
-    function createOnlineRoomUI() {
-        let code = "RT-" + Math.floor(1000 + Math.random() * 9000);
-        let selectedRounds = document.getElementById('round-select').value;
-        
-        // Simpan room ke Firebase
-        db.ref('rooms/' + code).set({
-            host: document.getElementById('username').value || 'RAJA TENGKORAK',
-            maxRounds: selectedRounds,
-            status: 'waiting'
-        });
-
-        alert("Room Berhasil Dibuat!\nKode Room Anda: " + code + "\n(Bagikan kode ini ke teman untuk bergabung).");
-    }
-
-    function joinOnlineRoomUI() {
-        let inputCode = document.getElementById('room-code-input').value.trim();
-        if (!inputCode) {
-            alert("Silakan masukkan Kode Room teman Anda terlebih dahulu!");
-            return;
-        }
-
-        db.ref('rooms/' + inputCode).once('value', (snapshot) => {
-            if (snapshot.exists()) {
-                let roomData = snapshot.val();
-                maxRounds = parseInt(roomData.maxRounds || 6);
-                alert("Berhasil bergabung ke Room " + inputCode + "!");
-                startGame();
-            } else {
-                alert("Room dengan kode tersebut tidak ditemukan!");
-            }
-        });
-    }
-
-    function sortCards(cards) {
-        return cards.sort((a, b) => {
-            if (suitWeight[a.suit] !== suitWeight[b.suit]) {
-                return suitWeight[a.suit] - suitWeight[b.suit];
-            }
-            return cardRank[a.val] - cardRank[b.val];
-        });
-    }
-
-    function loadGameHistoryUI() {
-        let history = JSON.parse(localStorage.getItem('rt_game_history')) || {
-            totalGames: 0,
-            highScore: 0,
-            winners: {},
-            losers: {}
-        };
-
-        document.getElementById('hist-total-games').innerText = `${history.totalGames} Game`;
-        document.getElementById('hist-high-score').innerText = `${history.highScore} Poin`;
-
-        let topWinner = Object.keys(history.winners).reduce((a, b) => history.winners[a] > history.winners[b] ? a : b, '-');
-        let mostLoss = Object.keys(history.losers).reduce((a, b) => history.losers[a] > history.losers[b] ? a : b, '-');
-
-        document.getElementById('hist-top-rank').innerText = topWinner !== '-' ? `${topWinner} (${history.winners[topWinner]}x)` : '-';
-        document.getElementById('hist-most-loss').innerText = mostLoss !== '-' ? `${mostLoss} (${history.losers[mostLoss]}x)` : '-';
-    }
-
-    function saveMatchToHistory(sortedPlayers) {
-        let history = JSON.parse(localStorage.getItem('rt_game_history')) || {
-            totalGames: 0,
-            highScore: 0,
-            winners: {},
-            losers: {}
-        };
-
-        history.totalGames += 1;
-
-        let winner = sortedPlayers[0];
-        let loser = sortedPlayers[sortedPlayers.length - 1];
-
-        history.winners[winner] = (history.winners[winner] || 0) + 1;
-        history.losers[loser] = (history.losers[loser] || 0) + 1;
-
-        if (playerTotalScores[winner] > history.highScore) {
-            history.highScore = playerTotalScores[winner];
-        }
-
-        localStorage.setItem('rt_game_history', JSON.stringify(history));
-        loadGameHistoryUI();
-    }
-
-    function submitAuth() {
-        initAudio();
-        document.getElementById('auth-screen').classList.add('hidden');
-        document.getElementById('lobby-screen').classList.remove('hidden');
-        loadGameHistoryUI();
-    }
-
-    function startGame() {
-        maxRounds = parseInt(document.getElementById('round-select').value);
-        currentRound = 1;
-
-        players.forEach(p => playerTotalScores[p] = 0);
-        updateScoreDisplays();
-        document.getElementById('lobby-screen').classList.add('hidden');
-        document.getElementById('game-screen').classList.remove('hidden');
-        startNewRound();
-    }
-
-    function startNewRound() {
-        document.getElementById('round-text').innerText = `Ronde ${currentRound}/${maxRounds}`;
-        clearTableBoard();
-        players.forEach(p => playerWins[p] = 0);
-        updateWinCounters();
-        dealCardsToAll();
-        openBiddingModal();
-    }
-
-    function clearTableBoard() {
-        players.forEach(p => {
-            const slot = document.getElementById(`slot-${p}`);
-            if (slot) slot.innerHTML = '';
-        });
-        currentTrickCards = [];
-    }
-
-    function updateWinCounters() {
-        document.getElementById('my-win').innerText = playerWins['You'];
-        document.getElementById('w-b').innerText = playerWins['Bangkoes'];
-        document.getElementById('w-v').innerText = playerWins['Verdo'];
-        document.getElementById('w-h').innerText = playerWins['Hesmin'];
-    }
-
-    function updateScoreDisplays() {
-        document.getElementById('my-score').innerText = playerTotalScores['You'];
-        document.getElementById('s-b').innerText = playerTotalScores['Bangkoes'];
-        document.getElementById('s-v').innerText = playerTotalScores['Verdo'];
-        document.getElementById('s-h').innerText = playerTotalScores['Hesmin'];
-    }
-
-    function dealCardsToAll() {
-        let fullDeck = [];
-        const suits = ['♦', '♣', '♥', '♠'];
-        const values = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A'];
-
-        suits.forEach(suit => {
-            values.forEach(val => {
-                fullDeck.push({ suit, val, red: ['♥', '♦'].includes(suit) });
-            });
-        });
-
-        fullDeck.sort(() => Math.random() - 0.5);
-
-        players.forEach((p, idx) => {
-            playerHands[p] = fullDeck.slice(idx * 13, (idx + 1) * 13);
-            sortCards(playerHands[p]);
-        });
-
-        playerHand = playerHands['You'];
-        renderHand();
-    }
-
-    function renderHand() {
-        const container = document.getElementById('my-hand');
-        container.innerHTML = '';
-
-        if (isSpectator) {
-            container.innerHTML = `<div style="color:#e07a48; font-weight:bold; margin:auto; font-size:12px;">👀 Anda sedang menonton pertandingan (Spectator Mode)</div>`;
-            return;
-        }
-
-        let leadSuit = currentTrickCards.length > 0 ? currentTrickCards[0].card.suit : null;
-        let hasLeadSuit = leadSuit ? playerHand.some(c => c.suit === leadSuit) : false;
-        let totalCards = playerHand.length;
-
-        let totalWidthSpan = Math.min(270, totalCards * 24); 
-        let startLeftOffset = (280 - totalWidthSpan) / 2;
-        let offsetStep = totalCards > 1 ? totalWidthSpan / (totalCards - 1) : 0;
-
-        playerHand.forEach((card, index) => {
-            const cardEl = document.createElement('div');
-            let isDisabled = false;
-            let isHighlighted = false;
-
-            if (leadSuit && hasLeadSuit && card.suit !== leadSuit) {
-                isDisabled = true;
-            } else if (leadSuit && hasLeadSuit && card.suit === leadSuit) {
-                isHighlighted = true;
-            } else if (!leadSuit) {
-                isHighlighted = true;
-            }
-
-            let classNames = `card ${card.red ? 'red' : ''}`;
-            if (isDisabled) classNames += ' disabled';
-            if (isHighlighted && !isDisabled) classNames += ' highlighted';
-
-            cardEl.className = classNames;
-            cardEl.style.left = `${startLeftOffset + (index * offsetStep)}px`;
-            cardEl.style.zIndex = index + 1;
-            
-            let centerContent = getCardDisplayContent(card.val, card.suit);
-            cardEl.innerHTML = `
-                <div class="card-corner">${card.val}<br>${card.suit}</div>
-                <div class="card-center">${centerContent}</div>
-                <div class="card-corner-bottom">${card.val}<br>${card.suit}</div>
-            `;
-
-            if (!isDisabled) {
-                cardEl.onclick = () => selectCardToPlay(cardEl, card);
-            } else {
-                cardEl.onclick = () => showAlertModal(leadSuit);
-            }
-
-            container.appendChild(cardEl);
-        });
-    }
-
-    function openBiddingModal() {
-        if (isSpectator) return;
-
-        selectedBidCards = [];
-        document.getElementById('bidding-modal').classList.remove('hidden');
-        document.getElementById('btn-confirm-target').disabled = true;
-        document.getElementById('bid-calc-result').innerText = '-';
-        document.getElementById('bid-warning-msg').innerText = '';
-
-        const container = document.getElementById('bidding-cards-container');
-        container.innerHTML = '';
-
-        let totalCards = playerHand.length;
-        let totalWidthSpan = Math.min(270, totalCards * 24);
-        let startLeftOffset = (280 - totalWidthSpan) / 2;
-        let offsetStep = totalCards > 1 ? totalWidthSpan / (totalCards - 1) : 0;
-
-        playerHand.forEach((card, index) => {
-            const cardEl = document.createElement('div');
-            cardEl.className = `card ${card.red ? 'red' : ''}`;
-            cardEl.style.left = `${startLeftOffset + (index * offsetStep)}px`;
-            cardEl.style.zIndex = index + 1;
-            
-            let centerContent = getCardDisplayContent(card.val, card.suit);
-            cardEl.innerHTML = `
-                <div class="card-corner">${card.val}<br>${card.suit}</div>
-                <div class="card-center">${centerContent}</div>
-                <div class="card-corner-bottom">${card.val}<br>${card.suit}</div>
-            `;
-            cardEl.onclick = () => toggleBidCard(cardEl, card);
-            container.appendChild(cardEl);
-        });
-    }
-
-    function toggleBidCard(element, card) {
-        if (element.classList.contains('selected')) {
-            element.classList.remove('selected');
-            selectedBidCards = selectedBidCards.filter(c => !(c.suit === card.suit && c.val === card.val));
-        } else {
-            if (selectedBidCards.length >= 2) return;
-            element.classList.add('selected');
-            selectedBidCards.push(card);
-        }
-
-        const confirmBtn = document.getElementById('btn-confirm-target');
-        const calcText = document.getElementById('bid-calc-result');
-        const warningText = document.getElementById('bid-warning-msg');
-
-        if (selectedBidCards.length >= 1) {
-            let target = parseCardValue(selectedBidCards[0].val);
-            if (selectedBidCards.length === 2) target += parseCardValue(selectedBidCards[1].val);
-            
-            let isDiffSuit = selectedBidCards.length === 2 && selectedBidCards[0].suit !== selectedBidCards[1].suit;
-
-            if (isDiffSuit && target < 7) {
-                calcText.innerText = `Target: ${target} (No Truf Gagal)`;
-                warningText.innerText = "⚠️ Peringatan: No Truf minimal total bid harus 7!";
-                confirmBtn.disabled = true;
-            } else {
-                warningText.innerText = "";
-                let trumpDesc = isDiffSuit ? 'NO TRUF (sah)' : selectedBidCards[0].suit;
-                calcText.innerText = `Target: ${target} (Truf: ${trumpDesc})`;
-                confirmBtn.disabled = false;
-            }
-        } else {
-            calcText.innerText = '-';
-            warningText.innerText = '';
-            confirmBtn.disabled = true;
-        }
-    }
-
-    function parseCardValue(val) {
-        if (['J', 'Q', 'K'].includes(val)) return 0;
-        if (val === 'A') return 1;
-        return parseInt(val);
-    }
-
-    function confirmBiddingTarget() {
-        document.getElementById('bidding-modal').classList.add('hidden');
-        
-        let myTarget = parseCardValue(selectedBidCards[0].val);
-        if (selectedBidCards.length === 2) myTarget += parseCardValue(selectedBidCards[1].val);
-
-        playerTargets['You'] = myTarget;
-        
-        let myTopSuit = selectedBidCards[0].suit;
-        if (selectedBidCards.length === 2 && suitWeight[selectedBidCards[1].suit] > suitWeight[myTopSuit]) {
-            myTopSuit = selectedBidCards[1].suit;
-        }
-
-        playerBidDetails['You'] = {
-            target: myTarget,
-            cardCount: selectedBidCards.length,
-            isDiffSuit: selectedBidCards.length === 2 && selectedBidCards[0].suit !== selectedBidCards[1].suit,
-            topSuit: myTopSuit
-        };
-
-        document.getElementById('my-target').innerText = myTarget;
-
-        ['Bangkoes', 'Verdo', 'Hesmin'].forEach(bot => {
-            let bTarget = Math.floor(Math.random() * 4) + 1;
-            playerTargets[bot] = bTarget;
-            
-            let botCardCount = Math.random() > 0.4 ? 2 : 1;
-            let suitsList = ['♦', '♣', '♥', '♠'];
-            let botSuit1 = suitsList[Math.floor(Math.random()*4)];
-            let botSuit2 = botCardCount === 2 ? suitsList[Math.floor(Math.random()*4)] : botSuit1;
-            
-            let botTopSuit = botSuit1;
-            if (botCardCount === 2 && suitWeight[botSuit2] > suitWeight[botTopSuit]) {
-                botTopSuit = botSuit2;
-            }
-
-            let botIsDiffSuit = botCardCount === 2 && botSuit1 !== botSuit2;
-            if (botIsDiffSuit && bTarget < 7) {
-                botIsDiffSuit = false;
-            }
-
-            playerBidDetails[bot] = {
-                target: bTarget,
-                cardCount: botCardCount,
-                isDiffSuit: botIsDiffSuit,
-                topSuit: botTopSuit
-            };
-        });
-
-        let highestBidder = players[0];
-        let maxBidObj = playerBidDetails[highestBidder];
-
-        for (let i = 1; i < players.length; i++) {
-            let p = players[i];
-            let currentObj = playerBidDetails[p];
-
-            if (currentObj.target > maxBidObj.target) {
-                highestBidder = p;
-                maxBidObj = currentObj;
-            } else if (currentObj.target === maxBidObj.target) {
-                if (suitWeight[currentObj.topSuit] > suitWeight[maxBidObj.topSuit]) {
-                    highestBidder = p;
-                    maxBidObj = currentObj;
-                } else if (suitWeight[currentObj.topSuit] === maxBidObj.topSuit) {
-                    if (currentObj.cardCount < maxBidObj.cardCount) {
-                        highestBidder = p;
-                        maxBidObj = currentObj;
-                    }
-                }
-            }
-        }
-
-        if (maxBidObj.isDiffSuit && maxBidObj.target >= 7) {
-            activeTrump = null; 
-            speakNoTrumpShortcutVoice();
-        } else {
-            activeTrump = maxBidObj.topSuit; 
-        }
-
-        if (activeTrump) {
-            document.getElementById('eye-left').innerText = activeTrump;
-            document.getElementById('eye-right').innerText = activeTrump;
-            document.getElementById('trump-text').innerText = `Truf: ${activeTrump}`;
-        } else {
-            document.getElementById('eye-left').innerText = 'Ø';
-            document.getElementById('eye-right').innerText = 'Ø';
-            document.getElementById('trump-text').innerText = `Truf: NO TRUF`;
-        }
-
-        let sumBids = Object.values(playerTargets).reduce((a, b) => a + b, 0);
-        let maxTargetVal = maxBidObj.target;
-
-        if (sumBids === 13) {
-            if (highestBidder === 'You') {
-                let choice = confirm("Jumlah total Bid adalah 13!\nSebagai pemilik Bid tertinggi, pilih OK untuk MAIN ATAS (Tambah Bid/Kurangi Bid) atau Cancel untuk MAIN BAWAH.");
-                gameMode = choice ? 'MAIN ATAS' : 'MAIN BAWAH';
-            } else {
-                gameMode = maxTargetVal >= 3 ? 'MAIN ATAS' : 'MAIN BAWAH';
-            }
-        } else if (sumBids > 13) {
-            gameMode = 'MAIN ATAS';
-        } else {
-            gameMode = 'MAIN BAWAH';
-        }
-        
-        document.getElementById('mode-text').innerText = `Mode: ${gameMode}`;
-
-        document.getElementById('t-b').innerText = playerTargets['Bangkoes'];
-        document.getElementById('t-v').innerText = playerTargets['Verdo'];
-        document.getElementById('t-h').innerText = playerTargets['Hesmin'];
-
-        currentTurnIndex = players.indexOf(highestBidder);
-        startTrick();
-    }
-
-    function startTrick() {
-        clearTableBoard();
-        renderHand();
-        processNextTurn();
-    }
-
-    function processNextTurn() {
-        if (currentTrickCards.length === 4) {
-            evaluateTrickWinner();
-            return;
-        }
-
-        let currentPlayer = players[currentTurnIndex];
-
-        if (currentPlayer === 'You') {
-            if (isSpectator) {
-                document.getElementById('status-msg').innerText = `Giliran Anda (Spectator), menunggu pemain...`;
-            } else {
-                document.getElementById('status-msg').innerText = "Giliran Anda membuang kartu!";
-                renderHand();
-            }
-        } else {
-            document.getElementById('status-msg').innerText = `Giliran ${currentPlayer} membuang kartu...`;
-            setTimeout(() => botPlayCard(currentPlayer), 700);
-        }
-    }
-
-    function selectCardToPlay(element, card) {
-        if (isSpectator || players[currentTurnIndex] !== 'You') return;
-
-        document.querySelectorAll('#my-hand .card').forEach(c => c.classList.remove('selected'));
-        element.classList.add('selected');
-        selectedPlayCard = { element, card };
-        document.getElementById('btn-confirm-play').classList.remove('hidden');
-    }
-
-    function confirmPlayCard() {
-        if (isSpectator || !selectedPlayCard || players[currentTurnIndex] !== 'You') return;
-
-        const { card } = selectedPlayCard;
-        let leadSuit = currentTrickCards.length > 0 ? currentTrickCards[0].card.suit : null;
-        let hasLeadSuit = leadSuit ? playerHand.some(c => c.suit === leadSuit) : false;
-
-        if (leadSuit && hasLeadSuit && card.suit !== leadSuit) {
-            showAlertModal(leadSuit);
-            return;
-        }
-
-        document.getElementById('btn-confirm-play').classList.add('hidden');
-
-        playerHand = playerHand.filter(c => !(c.suit === card.suit && c.val === card.val));
-        playerHands['You'] = playerHand;
-        selectedPlayCard = null;
-        renderHand();
-
-        let isTrump = activeTrump ? (card.suit === activeTrump) : false;
-        
-        if (isTrump && leadSuit && leadSuit !== activeTrump) {
-            speakGoatBleatVoice();
-        } else {
-            playCardSound('normal');
-        }
-
-        addCardToTable(card, 'You', isTrump);
-        currentTrickCards.push({ player: 'You', card, isBack: isTrump });
-
-        currentTurnIndex = (currentTurnIndex + 1) % 4;
-        processNextTurn();
-    }
-
-    function botPlayCard(botName) {
-        let hand = playerHands[botName] || [];
-        if (hand.length === 0) return;
-
-        let leadSuit = currentTrickCards.length > 0 ? currentTrickCards[0].card.suit : null;
-
-        let validCards = hand;
-        if (leadSuit) {
-            let sameSuitCards = hand.filter(c => c.suit === leadSuit);
-            if (sameSuitCards.length > 0) validCards = sameSuitCards;
-        }
-
-        if (!validCards || validCards.length === 0) {
-            validCards = hand;
-        }
-
-        let chosenCard = validCards[Math.floor(Math.random() * validCards.length)];
-        playerHands[botName] = hand.filter(c => !(c.suit === chosenCard.suit && c.val === chosenCard.val));
-
-        let isTrump = activeTrump ? (chosenCard.suit === activeTrump) : false;
-
-        if (isTrump && leadSuit && leadSuit !== activeTrump) {
-            speakGoatBleatVoice();
-        } else {
-            playCardSound('normal');
-        }
-
-        addCardToTable(chosenCard, botName, isTrump);
-        currentTrickCards.push({ player: botName, card: chosenCard, isBack: isTrump });
-
-        currentTurnIndex = (currentTurnIndex + 1) % 4;
-        processNextTurn();
-    }
-
-    function evaluateTrickWinner() {
-        currentTrickCards.forEach(item => {
-            if (item.isBack) {
-                addCardToTable(item.card, item.player, false);
-            }
-        });
-
-        document.getElementById('status-msg').innerText = "Semua kartu terbuka, menghitung pemenang...";
-
-        setTimeout(() => {
-            let leadSuit = currentTrickCards[0].card.suit;
-            let winningPlay = currentTrickCards[0];
-
-            for (let i = 1; i < currentTrickCards.length; i++) {
-                let play = currentTrickCards[i];
-                let currBest = winningPlay.card;
-                let card = play.card;
-
-                if (activeTrump && card.suit === activeTrump && currBest.suit !== activeTrump) {
-                    winningPlay = play;
-                } else if (card.suit === currBest.suit || (!activeTrump && card.suit === leadSuit && currBest.suit === leadSuit)) {
-                    if (cardRank[card.val] > cardRank[currBest.val]) {
-                        winningPlay = play;
-                    }
-                }
-            }
-
-            let winner = winningPlay.player;
-            let oldWinCount = playerWins[winner];
-            playerWins[winner]++;
-            updateWinCounters();
-
-            if (playerTargets[winner] === 0) {
-                if (oldWinCount === 0 && playerWins[winner] === 1) {
-                    speakSlipZeroVoice();
-                    triggerEggExplosion();
-                } else if (playerWins[winner] > 1) {
-                    speakFunnyExtraVoice();
-                    triggerEggExplosion();
-                }
-            } else if (playerWins[winner] > playerTargets[winner] && playerTargets[winner] > 0) {
-                speakOverbidVoice();
-            }
-
-            document.getElementById('status-msg').innerText = `Trik dimenangkan oleh ${winner}!`;
-
-            currentTurnIndex = players.indexOf(winner);
-
-            setTimeout(() => {
-                if (playerHand.length === 0) {
-                    calculateRoundScores();
-                } else {
-                    startTrick();
-                }
-            }, 1800);
-        }, 1000);
-    }
-
-    function calculateRoundScores() {
-        players.forEach(p => {
-            let target = playerTargets[p];
-            let wins = playerWins[p];
-            let roundScore = 0;
-
-            if (target === 0) {
-                if (wins === 0) {
-                    roundScore = 10; 
-                } else {
-                    let extraWins = wins - 1;
-                    roundScore = -5 + (- (extraWins * 2));
-                }
-            } else {
-                if (target === wins) {
-                    roundScore = target;
-                } else {
-                    let diff = Math.abs(wins - target);
-                    roundScore = -diff * 2;
-                }
-            }
-            playerTotalScores[p] += roundScore;
-        });
-
-        updateScoreDisplays();
-        playCardSound('celebration');
-
-        let sortedPlayers = [...players].sort((a, b) => playerTotalScores[b] - playerTotalScores[a]);
-
-        let tableHTML = `<table class="score-table">
-            <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Pemain</th>
-                    <th>Target</th>
-                    <th>Win</th>
-                    <th>Skor Total</th>
-                </tr>
-            </thead>
-            <tbody>`;
-
-        sortedPlayers.forEach((p, idx) => {
-            let isWinClass = idx === 0 ? 'class="winner-row"' : '';
-            tableHTML += `<tr ${isWinClass}>
-                <td>#${idx + 1}</td>
-                <td><b>${p}</b></td>
-                <td>${playerTargets[p]}</td>
-                <td>${playerWins[p]}</td>
-                <td><b>${playerTotalScores[p]}</b></td>
-            </tr>`;
-        });
-        tableHTML += `</tbody></table>`;
-
-        document.getElementById('round-end-title').innerText = `REKAP AKHIR RONDE ${currentRound}`;
-        document.getElementById('round-end-content').innerHTML = tableHTML;
-        
-        let modalBox = document.getElementById('round-modal-content-box');
-        let nextBtn = document.getElementById('btn-proceed-round');
-        let restartBtn = document.getElementById('btn-restart-game');
-        let shareBtn = document.getElementById('btn-share-result');
-
-        if (currentRound === maxRounds) {
-            saveMatchToHistory(sortedPlayers);
-            startNonstopGrandCelebration();
-
-            modalBox.className = 'modal-content modal-celebration';
-            
-            let champion = sortedPlayers[0];
-            let isUserWinner = champion === 'You';
-
-            document.getElementById('round-end-title').innerHTML = "👑 SELAMAT KEPADA SANG JUARA 👑";
-            
-            let celebHTML = `<h2 style="color:#ffb74d; text-align:center; font-size:22px; margin-bottom:6px; font-weight:900;">🏆 ${champion} 🏆</h2>`;
-            
-            celebHTML += `<div class="voucher-box">
-                <div style="font-size:12px; font-weight:bold;">🎉 HADIAH UTAMA 🎉</div>
-                <div style="font-size:14px; font-weight:900; margin:4px 0;">VOUCHER 2 HARI MENGINAP</div>
-                <div style="font-size:11px;">di Toko YASMIN</div>
-            </div>`;
-
-            celebHTML += tableHTML;
-
-            document.getElementById('round-end-content').innerHTML = celebHTML;
-            
-            nextBtn.classList.add('hidden');
-            shareBtn.classList.remove('hidden');
-
-            if (isUserWinner) {
-                restartBtn.classList.remove('hidden');
-            } else {
-                restartBtn.classList.add('hidden');
-                nextBtn.classList.remove('hidden');
-                nextBtn.innerText = "Kembali ke Lobby";
-            }
-        } else {
-            modalBox.className = 'modal-content';
-            restartBtn.classList.add('hidden');
-            shareBtn.classList.add('hidden');
-            nextBtn.classList.remove('hidden');
-            nextBtn.innerText = "Lanjut Ronde Berikutnya";
-        }
-
-        document.getElementById('round-end-modal').classList.remove('hidden');
-    }
-
-    function shareGameResult() {
-        let champion = [...players].sort((a, b) => playerTotalScores[b] - playerTotalScores[a])[0];
-        let shareText = `👑 Game Truf Online - RAJA TENGKORAK 👑\nSELAMAT KEPADA SANG JUARA: ${champion}!\nMendapatkan Voucher 2 Hari Menginap di Toko YASMIN!\nAyo main sekarang!`;
-        
-        if (navigator.share) {
-            navigator.share({
-                title: 'Raja Tengkorak Truf Game',
-                text: shareText,
-                url: window.location.href
-            }).catch(console.error);
-        } else {
-            let whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareText)}`;
-            window.open(whatsappUrl, '_blank');
-        }
-    }
-
-    function restartGameByWinner() {
-        stopCelebrationSound();
-        document.getElementById('round-end-modal').classList.add('hidden');
-        startGame();
-    }
-
-    function proceedNextRoundOrFinish() {
-        stopCelebrationSound();
-        document.getElementById('round-end-modal').classList.add('hidden');
-        
-        if (currentRound < maxRounds) {
-            currentRound++;
-            startNewRound();
-        } else {
-            document.getElementById('game-screen').classList.add('hidden');
-            document.getElementById('lobby-screen').classList.remove('hidden');
-        }
-    }
-
-    function openScoreModal() {
-        let sortedPlayers = [...players].sort((a, b) => playerTotalScores[b] - playerTotalScores[a]);
-        
-        let tableHTML = `<table class="score-table">
-            <thead>
-                <tr>
-                    <th>Rank</th>
-                    <th>Pemain</th>
-                    <th>Target</th>
-                    <th>Win</th>
-                    <th>Skor Total</th>
-                </tr>
-            </thead>
-            <tbody>`;
-
-        sortedPlayers.forEach((p, idx) => {
-            let isWinClass = idx === 0 ? 'class="winner-row"' : '';
-            tableHTML += `<tr ${isWinClass}>
-                <td>#${idx + 1}</td>
-                <td><b>${p}</b></td>
-                <td>${playerTargets[p]}</td>
-                <td>${playerWins[p]}</td>
-                <td><b>${playerTotalScores[p]}</b></td>
-            </tr>`;
-        });
-        tableHTML += `</tbody></table>`;
-
-        document.getElementById('score-list-content').innerHTML = tableHTML;
-        document.getElementById('score-modal').classList.remove('hidden');
-    }
-
-    function closeScoreModal() {
-        document.getElementById('score-modal').classList.add('hidden');
-    }
-
-    function addCardToTable(card, owner, isBack = false) {
-        const slot = document.getElementById(`slot-${owner}`);
-        if (!slot) return;
-        
-        if (isBack) {
-            slot.innerHTML = `<div class="card back" style="position:relative;"></div>`;
-        } else {
-            let centerContent = getCardDisplayContent(card.val, card.suit);
-            slot.innerHTML = `
-                <div class="card ${card.red ? 'red' : ''}" style="position:relative;">
-                    <div class="card-corner">${card.val}<br>${card.suit}</div>
-                    <div class="card-center">${centerContent}</div>
-                    <div class="card-corner-bottom">${card.val}<br>${card.suit}</div>
-                </div>
-            `;
-        }
-    }
-
-    function endGame() {
-        stopCelebrationSound();
-        document.getElementById('game-screen').classList.add('hidden');
-        document.getElementById('lobby-screen').classList.remove('hidden');
-    }
+    function openScoreModal() { document.getElementById('score-modal').classList.remove('hidden'); }
+    function closeScoreModal() { document.getElementById('score-modal').classList.add('hidden'); }
+    function proceedNextRound() { document.getElementById('round-end-modal').classList.add('hidden'); }
 </script>
 
 </body>
